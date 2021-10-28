@@ -1,6 +1,6 @@
 tool
 extends Resource
-class_name EventResource
+class_name Event
 
 ## 
 ## Base class for all events.
