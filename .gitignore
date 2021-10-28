@@ -1,0 +1,39 @@
+# Ignores everything
+/*
+
+
+# Except:
+##########
+# GIT files
+##########
+!.gitignore
+!.gitattributes
+!README.md
+!LICENSE
+
+
+##########
+# Addons files
+##########
+
+# Include the add-ons folder
+!/addons
+# ...but ignore its contents.
+addons/*
+
+# Except for the main plugin
+!/addons/event_system_plugin/
+!/addons/event_system_plugin/*
+
+# And the unit-test plugin that I'll add someday
+
+# And for last (but not less important), script templates
+!/script_templates/
+!/script_templates/*
+
+##########
+# Docs
+##########
+# And documentation, for sure!
+!/docs/
+!/docs/*
