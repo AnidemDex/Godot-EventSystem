@@ -8,3 +8,7 @@ func resume() -> void:
 
 func pause() -> void:
 	stop(false)
+
+
+func _on_Event_finished(event) -> void:
+	pass
