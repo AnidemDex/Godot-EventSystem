@@ -1,6 +1,6 @@
 tool
 extends Resource
-class_name Event
+class_name Event, "res://addons/event_system_plugin/assets/icons/timeline_icon.png"
 
 ## 
 ## Base class for all events.
@@ -19,9 +19,11 @@ signal event_started(event_resource)
 ## and a bool value [code]jump_to_next_event[/code]
 signal event_finished(event_resource)
 
+var event_node:Node
+var _EventManager:Node
 
 ## Executes the event behaviour.
-func execute() -> void:
+func execute(event_node=null) -> void:
 	pass
 
 
@@ -30,5 +32,5 @@ func finish() -> void:
 	pass
 
 
-func _execute() -> void:
+func _execute(event_node=null) -> void:
 	pass
