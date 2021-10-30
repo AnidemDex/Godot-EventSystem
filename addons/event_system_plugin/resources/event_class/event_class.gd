@@ -20,17 +20,49 @@ signal event_started(event_resource)
 signal event_finished(event_resource)
 
 var event_node:Node
+
+##########
+# Event Editor Properties
+##########
+
+## The event icon that'll be displayed in the editor
+var event_icon:Texture
+
+## The event color that event node will take in the editor
+var event_color:Color = Color("3c3d5e")
+
+## The event name that'll be displayed in the editor.
+## If the resource name is different from the event name, resource_name is returned instead.
+var event_name:String = "CustomEvent" setget ,get_event_name
+
+## The event preview string that will be displayed next to the event name in the editor.
+## You can use String formats to parse variables from the script:
+## [codeblock] event_preview_string = "{resource_name}" [/codeblock]
+## Will display the resource's name instead of [code]{resource_name}[/code].
+var event_preview_string:String = ""
+
+## The event hint that'll be displayed when you hover the event button in the editor.
+var event_hint:String = ""
+
+
 var _EventManager:Node
 
 ## Executes the event behaviour.
 func execute(event_node=null) -> void:
-	pass
+	emit_signal("event_started", self)
+	_execute(event_node)
 
 
 ## Ends the event behaviour.
 func finish() -> void:
-	pass
+	emit_signal("event_finished", self)
 
 
 func _execute(event_node=null) -> void:
 	pass
+
+
+func get_event_name() -> String:
+	if event_name != resource_name and resource_name != "":
+		return resource_name
+	return event_name
