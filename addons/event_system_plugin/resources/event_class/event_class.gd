@@ -16,7 +16,6 @@ signal event_started(event_resource)
 
 ## Emmited when the event finish. 
 ## The signal is emmited with the event resource [code]event_resource[/code]
-## and a bool value [code]jump_to_next_event[/code]
 signal event_finished(event_resource)
 
 var event_node:Node
@@ -26,14 +25,14 @@ var event_node:Node
 ##########
 
 ## The event icon that'll be displayed in the editor
-var event_icon:Texture
+var event_icon:Texture = null
 
 ## The event color that event node will take in the editor
-var event_color:Color = Color("3c3d5e")
+var event_color:Color = Color("FBB13C")
 
 ## The event name that'll be displayed in the editor.
 ## If the resource name is different from the event name, resource_name is returned instead.
-var event_name:String = "CustomEvent" setget ,get_event_name
+var event_name:String = "Event" setget ,get_event_name
 
 ## The event preview string that will be displayed next to the event name in the editor.
 ## You can use String formats to parse variables from the script:
