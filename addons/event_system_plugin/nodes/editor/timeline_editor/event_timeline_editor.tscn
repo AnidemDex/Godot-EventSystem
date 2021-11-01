@@ -1,11 +1,17 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/event_system_plugin/nodes/editor/timeline_editor/event_timeline_editor.gd" type="Script" id=1]
 
 [node name="EventTimelineEditor" type="PanelContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+ResourceNamePath = NodePath("VBoxContainer/HBoxContainer/Label")
+RelatedNodePath = NodePath("VBoxContainer/HBoxContainer/ToolButton")
+EventContainerPath = NodePath("VBoxContainer/PanelContainer/VBoxContainer/VBoxContainer")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 margin_left = 7.0
@@ -29,6 +35,7 @@ align = 1
 margin_left = 921.0
 margin_right = 1010.0
 margin_bottom = 22.0
+disabled = true
 text = "{UsedNode}"
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
@@ -43,3 +50,13 @@ margin_left = 7.0
 margin_top = 7.0
 margin_right = 1003.0
 margin_bottom = 553.0
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/VBoxContainer"]
+margin_right = 996.0
+margin_bottom = 14.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/VBoxContainer"]
+margin_top = 18.0
+margin_right = 996.0
+margin_bottom = 546.0
+size_flags_vertical = 3

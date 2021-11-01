@@ -2,15 +2,15 @@ extends Control
 
 const Utils = preload("res://addons/event_system_plugin/core/utils.gd")
 
-export(NodePath) var DrawNodePath:NodePath = ""
+export(NodePath) var DrawNodePath:NodePath
 
-export(NodePath) var NameContainerPath:NodePath = ""
-export(NodePath) var EventIconPath:NodePath = ""
-export(NodePath) var EventNamePath:NodePath = ""
+export(NodePath) var NameContainerPath:NodePath
+export(NodePath) var EventIconPath:NodePath
+export(NodePath) var EventNamePath:NodePath
 
-export(NodePath) var DescContainerPath:NodePath = ""
-export(NodePath) var EventDescPath:NodePath = ""
-export(NodePath) var EventIdxPath:NodePath = ""
+export(NodePath) var DescContainerPath:NodePath
+export(NodePath) var EventDescPath:NodePath
+export(NodePath) var EventIdxPath:NodePath
 
 var event:Event = Event.new()
 var event_index:int = -1
