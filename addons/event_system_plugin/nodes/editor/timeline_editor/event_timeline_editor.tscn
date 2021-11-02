@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/event_system_plugin/nodes/editor/timeline_editor/event_timeline_editor.gd" type="Script" id=1]
+[ext_resource path="res://addons/event_system_plugin/nodes/editor/category_manager/category_manager.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/event_system_plugin/nodes/editor/timeline_editor/timeline_displayer.gd" type="Script" id=3]
 
 [node name="EventTimelineEditor" type="PanelContainer"]
 anchor_right = 1.0
@@ -10,8 +12,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 ResourceNamePath = NodePath("VBoxContainer/HBoxContainer/Label")
-RelatedNodePath = NodePath("VBoxContainer/HBoxContainer/ToolButton")
-EventContainerPath = NodePath("VBoxContainer/PanelContainer/VBoxContainer/VBoxContainer")
+CategoryManagerPath = NodePath("VBoxContainer/PanelContainer/VBoxContainer/CategoryManager")
+EventContainerPath = NodePath("VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/VBoxContainer")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 margin_left = 7.0
@@ -21,25 +23,17 @@ margin_bottom = 593.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 margin_right = 1010.0
-margin_bottom = 22.0
+margin_bottom = 14.0
 
 [node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
-margin_top = 4.0
-margin_right = 917.0
-margin_bottom = 18.0
+margin_right = 1010.0
+margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "{TimelineName}"
 align = 1
 
-[node name="ToolButton" type="ToolButton" parent="VBoxContainer/HBoxContainer"]
-margin_left = 921.0
-margin_right = 1010.0
-margin_bottom = 22.0
-disabled = true
-text = "{UsedNode}"
-
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
-margin_top = 26.0
+margin_top = 18.0
 margin_right = 1010.0
 margin_bottom = 586.0
 size_flags_horizontal = 3
@@ -49,14 +43,28 @@ size_flags_vertical = 3
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 1003.0
-margin_bottom = 553.0
+margin_bottom = 561.0
+alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/VBoxContainer"]
+[node name="CategoryManager" parent="VBoxContainer/PanelContainer/VBoxContainer" instance=ExtResource( 2 )]
 margin_right = 996.0
 margin_bottom = 14.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/PanelContainer/VBoxContainer"]
 margin_top = 18.0
 margin_right = 996.0
-margin_bottom = 546.0
+margin_bottom = 554.0
+size_flags_horizontal = 3
 size_flags_vertical = 3
+follow_focus = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer"]
+margin_right = 996.0
+margin_bottom = 536.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 0
+script = ExtResource( 3 )
+
+[connection signal="event_pressed" from="VBoxContainer/PanelContainer/VBoxContainer/CategoryManager" to="." method="_on_CategoryManager_event_pressed"]
+[connection signal="event_node_added" from="VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/VBoxContainer" to="." method="_on_TimelineDisplayer_event_node_added"]
