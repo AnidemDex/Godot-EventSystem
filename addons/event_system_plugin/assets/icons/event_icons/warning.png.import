@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/warning.png-a705d8b8ebb61a62227e6522b13e8d21.stex"
+path="res://.import/warning.png-17172ccee0471323b514bbb299492550.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/event_system_plugin/assets/icons/warning.png"
-dest_files=[ "res://.import/warning.png-a705d8b8ebb61a62227e6522b13e8d21.stex" ]
+source_file="res://addons/event_system_plugin/assets/icons/event_icons/warning.png"
+dest_files=[ "res://.import/warning.png-17172ccee0471323b514bbb299492550.stex" ]
 
 [params]
 

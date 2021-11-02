@@ -25,7 +25,7 @@ var event_node:Node
 ##########
 
 ## The event icon that'll be displayed in the editor
-var event_icon:Texture = null
+var event_icon:Texture = load("res://addons/event_system_plugin/assets/icons/event_icons/warning.png")
 
 ## The event color that event node will take in the editor
 var event_color:Color = Color("FBB13C")
@@ -42,6 +42,8 @@ var event_preview_string:String = ""
 
 ## The event hint that'll be displayed when you hover the event button in the editor.
 var event_hint:String = ""
+
+var event_category:String = "Custom"
 
 
 var _EventManager:Node
