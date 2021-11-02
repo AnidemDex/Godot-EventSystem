@@ -1,4 +1,7 @@
-extends PanelContainer
+tool
+extends Container
+
+signal event_selected(event)
 
 const _CategoryManager = preload("res://addons/event_system_plugin/nodes/editor/category_manager/category_manager.gd")
 const _TimelineDisplayer = preload("res://addons/event_system_plugin/nodes/editor/timeline_editor/timeline_displayer.gd")
@@ -21,24 +24,38 @@ onready var _timeline_displayer:_TimelineDisplayer = get_node(EventContainerPath
 
 func fake_ready() -> void:
 	_timeline_displayer.set_drag_forwarding(self)
-	get_tree().root.connect("gui_focus_changed", self, "_on_global_focus_changed")
+	get_tree().root.connect("gui_focus_changed", self, "_on_global_focus_changed", [], CONNECT_DEFERRED)
 
 
 func edit_resource(resource) -> void:
+	if _edited_resource == resource:
+		_timeline_displayer.reload()
+		return
+	
 	if _edited_resource:
 		if _edited_resource.is_connected("changed", _timeline_displayer, "reload"):
 			_edited_resource.disconnect("changed", _timeline_displayer, "reload")
 	
 	_edited_resource = resource
-	if not _edited_resource.is_connected("changed", _timeline_displayer, "reload"):
-		_edited_resource.connect("changed", _timeline_displayer, "reload")
+	
 	_update_values()
 
 
 func _update_values() -> void:
+	if _edited_resource == null:
+		push_error("No resource to edit")
+		_timeline_displayer.call("_unload_events")
+		return
+	
+	_connect_resource_signals()
 	_update_displayed_name()
 	_generate_event_buttons()
 	_update_timeline_displayer()
+
+
+func _connect_resource_signals() -> void:
+	if not _edited_resource.is_connected("changed", _timeline_displayer, "reload"):
+		_edited_resource.connect("changed", _timeline_displayer, "reload")
 
 
 func _update_displayed_name() -> void:
@@ -66,12 +83,27 @@ func _update_timeline_displayer() -> void:
 	_timeline_displayer.load_timeline(_edited_resource)
 
 
+func _add_event(event:Event, at_position:int=-1) -> void:
+	_UndoRedo.create_action("Add event to timeline")
+	_UndoRedo.add_do_method(_edited_resource, "add_event", event, at_position)
+	_UndoRedo.add_undo_method(_edited_resource, "erase_event", event)
+	_UndoRedo.commit_action()
+
+
+func _remove_event(event:Event) -> void:
+	var event_idx:int = _edited_resource.get_events().find(event)
+	_UndoRedo.create_action("Remove event from timeline")
+	_UndoRedo.add_do_method(_edited_resource, "erase_event", event)
+	_UndoRedo.add_undo_method(_edited_resource, "add_event", event, event_idx)
+	_UndoRedo.commit_action()
+
+
 func _on_CategoryManager_event_pressed(event:Event) -> void:
 	var idx:int = -1
 	if is_instance_valid(_last_focused_event_node):
 		idx = int(_last_focused_event_node.get("event_index"))+1
 	
-	_edited_resource.add_event(event, idx)
+	_add_event(event, idx)
 
 
 func _on_TimelineDisplayer_event_node_added(event_node:Control) -> void:
@@ -85,15 +117,17 @@ func _on_global_focus_changed(control:Control) -> void:
 	
 	if control is _TimelineDisplayer._EventNode:
 		_last_focused_event_node = control
+		emit_signal("event_selected", control.get("event"))
 		return
 	
 	_last_focused_event_node = null
+
 
 func _on_EventNode_gui_input(event: InputEvent, event_node) -> void:
 	if event is InputEventKey:
 		if event.scancode == KEY_DELETE:
 			var _event = event_node.get("event")
-			_edited_resource.erase_event(_event)
+			_remove_event(_event)
 			accept_event()
 
 ###########
@@ -117,7 +151,7 @@ func _on_drag_begin() -> void:
 	if not(drag_data is Event):
 		return
 	
-	_edited_resource.erase_event(drag_data)
+	_remove_event(drag_data)
 	
 	if not is_instance_valid(_separator_node):
 		_generate_separator_node()
@@ -168,8 +202,8 @@ func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
 
 func drop_data_fw(position: Vector2, data, node) -> void:
 	if node == _timeline_displayer and data is Event:
-		_edited_resource.add_event(data)
+		_add_event(data)
 		return
 	
 	var _position:int = _separator_node.event_index
-	_edited_resource.add_event(data, _position)
+	_add_event(data, _position)
