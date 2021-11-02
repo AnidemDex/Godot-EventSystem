@@ -11,8 +11,11 @@ var _events:Array = []
 var _can_loop:bool = false setget ,can_loop
 
 
-func add_event(event) -> void:
-	_events.append(event)
+func add_event(event, at_position=-1) -> void:
+	if at_position >= 0:
+		_events.insert(at_position, event)
+	else:
+		_events.append(event)
 	emit_changed()
 
 
