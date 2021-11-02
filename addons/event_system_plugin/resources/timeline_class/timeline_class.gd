@@ -72,3 +72,14 @@ func _init() -> void:
 
 func _to_string() -> String:
 	return "[{class}:{id}]".format({"class":"Timeline", "id":get_instance_id()})
+
+func _get_property_list() -> Array:
+	var p = []
+	p.append(
+		{
+			"name":"_events",
+			"type":TYPE_ARRAY,
+			"usage":PROPERTY_USAGE_NOEDITOR|PROPERTY_USAGE_SCRIPT_VARIABLE
+		}
+	)
+	return p
