@@ -12,7 +12,7 @@ export(NodePath) var DescContainerPath:NodePath
 export(NodePath) var EventDescPath:NodePath
 export(NodePath) var EventIdxPath:NodePath
 
-var event:Event = Event.new()
+var event:Event = null
 var event_index:int = -1
 
 

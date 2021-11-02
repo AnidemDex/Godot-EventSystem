@@ -3,7 +3,7 @@
 [ext_resource path="res://addons/event_system_plugin/assets/themes/event_node/event_node.tres" type="Theme" id=1]
 [ext_resource path="res://addons/event_system_plugin/assets/themes/event_node/event_title_piece.tres" type="StyleBox" id=2]
 [ext_resource path="res://addons/event_system_plugin/assets/themes/event_node/event_description_piece.tres" type="StyleBox" id=3]
-[ext_resource path="res://addons/event_system_plugin/assets/icons/warning.png" type="Texture" id=4]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/warning.png" type="Texture" id=4]
 [ext_resource path="res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd" type="Script" id=5]
 
 [node name="EventNode" type="PanelContainer"]
