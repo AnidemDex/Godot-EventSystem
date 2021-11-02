@@ -1,3 +1,4 @@
+tool
 extends PanelContainer
 
 signal event_pressed(event)

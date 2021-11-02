@@ -1,3 +1,4 @@
+tool
 extends Control
 
 const Utils = preload("res://addons/event_system_plugin/core/utils.gd")
@@ -45,6 +46,7 @@ func _update_values() -> void:
 	_update_event_name()
 	_update_event_description()
 	_update_event_index()
+	_update_event_icon()
 	update()
 
 
@@ -70,6 +72,10 @@ func _update_event_description() -> void:
 
 func _update_event_index() -> void:
 	_index_node.text = str(event_index)
+
+
+func _update_event_icon() -> void:
+	_icon_node.texture = event.event_icon
 
 
 func _draw() -> void:
@@ -153,6 +159,7 @@ func _notification(what: int) -> void:
 
 
 func _on_focus_enter() -> void:
+	print("Focus in: ", self)
 	var desc_stylebox:StyleBoxFlat = _desc_container_node.get_stylebox("panel") as StyleBoxFlat
 	var name_stylebox:StyleBoxFlat = _name_container.get_stylebox("panel") as StyleBoxFlat
 	desc_stylebox.border_color = get_color("hover")
@@ -162,6 +169,7 @@ func _on_focus_enter() -> void:
 
 
 func _on_focus_exit() -> void:
+	print("Focus out: ", self)
 	var desc_stylebox:StyleBoxFlat = _desc_container_node.get_stylebox("panel") as StyleBoxFlat
 	var name_stylebox:StyleBoxFlat = _name_container.get_stylebox("panel") as StyleBoxFlat
 	desc_stylebox.border_color = get_color("outline")

@@ -1,3 +1,4 @@
+tool
 extends VBoxContainer
 
 signal event_node_added(event_node)

@@ -1,3 +1,4 @@
+tool
 extends PanelContainer
 
 signal event_pressed(event_script)
@@ -46,7 +47,7 @@ func add_event(event:Resource) -> void:
 	event_button.clip_text = true
 	
 	event_button.size_flags_vertical = SIZE_EXPAND_FILL
-	event_button.rect_min_size = Vector2(32,32)
+	event_button.rect_min_size = Vector2(24,24)
 	
 	event_button.hint_tooltip = str(event.get("event_hint"))
 	
