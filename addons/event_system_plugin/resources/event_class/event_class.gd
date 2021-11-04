@@ -18,6 +18,15 @@ signal event_started(event_resource)
 ## The signal is emmited with the event resource [code]event_resource[/code]
 signal event_finished(event_resource)
 
+##########
+# Default Event Properties
+##########
+
+## Determines if the event will go to next event inmediatly or not. 
+## If value is true, the next event will be executed when event ends.
+export(bool) var continue_at_end:bool = true setget _set_continue
+
+
 var event_node:Node
 
 ##########
@@ -46,12 +55,13 @@ var event_hint:String = ""
 var event_category:String = "Custom"
 
 
-var _EventManager:Node
+var event_manager:Node
 
 ## Executes the event behaviour.
-func execute(event_node=null) -> void:
+func execute(_event_node=null) -> void:
 	emit_signal("event_started", self)
-	_execute(event_node)
+	event_node = _event_node
+	_execute()
 
 
 ## Ends the event behaviour.
@@ -59,11 +69,20 @@ func finish() -> void:
 	emit_signal("event_finished", self)
 
 
-func _execute(event_node=null) -> void:
-	pass
+func _execute() -> void:
+	finish()
 
 
 func get_event_name() -> String:
 	if event_name != resource_name and resource_name != "":
 		return resource_name
 	return event_name
+
+
+func _set_continue(value:bool) -> void:
+	continue_at_end = value
+	property_list_changed_notify()
+	emit_changed()
+
+func _to_string() -> String:
+	return "[{event_name}:{id}]".format({"event_name":event_name, "id":get_instance_id()})

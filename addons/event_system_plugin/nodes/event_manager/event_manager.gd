@@ -1,15 +1,18 @@
 extends Node
+class_name EventManager
+
+signal custom_signal(data)
 
 signal event_started(event)
 signal event_finished(event)
 
 signal timeline_started(timeline_resource)
-signal timeline_ended(timeline_resource)
+signal timeline_finished(timeline_resource)
 
 export(NodePath) var event_node_path:NodePath = "."
 export(bool) var start_on_ready:bool = false
 
-var timeline:Timeline
+export(Resource) var timeline
 
 func _ready() -> void:
 	if Engine.editor_hint:
@@ -26,7 +29,9 @@ func start_timeline(timeline_resource:Timeline=timeline) -> void:
 	if timeline == null:
 		_notify_timeline_end()
 		return
-		
+	
+	if timeline._event_queue.empty():
+		timeline.initialize()
 	
 	go_to_next_event()
 
@@ -37,13 +42,10 @@ func go_to_next_event() -> void:
 		_notify_timeline_end()
 		return
 	
-	var _event_idx = timeline.last_event+1
 	var event = timeline.get_next_event()
 	
-	if _event_idx > timeline.get_events().size():
+	if event == null:
 		_notify_timeline_end()
-		if not timeline.can_loop():
-			return
 	
 	_execute_event(event)
 
@@ -53,7 +55,7 @@ func _execute_event(event:Event) -> void:
 		return
 	
 	var node:Node = self if event_node_path == @"." else get_node(event_node_path)
-	node.set("_EventManager", self)
+	event.set("event_manager", self)
 	
 	_connect_event_signals(event)
 	
@@ -63,16 +65,18 @@ func _execute_event(event:Event) -> void:
 func _connect_event_signals(event:Event) -> void:
 	if not event.is_connected("event_started", self, "_on_Event_started"):
 		event.connect("event_started", self, "_on_Event_started")
-	if not event.is_connected("event_ended", self, "_on_Event_finished"):
-		event.connect("event_ended", self, "_on_Event_finished")
+	if not event.is_connected("event_finished", self, "_on_Event_finished"):
+		event.connect("event_finished", self, "_on_Event_finished")
 
 
-func _on_Event_started(event) -> void:
+func _on_Event_started(event:Event) -> void:
 	emit_signal("event_started", event)
 
 
-func _on_Event_finished(event) -> void:
+func _on_Event_finished(event:Event) -> void:
 	emit_signal("event_finished", event)
+	if event.continue_at_end:
+		go_to_next_event()
 
 
 func _notify_timeline_start() -> void:
@@ -80,4 +84,4 @@ func _notify_timeline_start() -> void:
 
 
 func _notify_timeline_end() -> void:
-	emit_signal("timeline_ended", timeline)
+	emit_signal("timeline_finished", timeline)

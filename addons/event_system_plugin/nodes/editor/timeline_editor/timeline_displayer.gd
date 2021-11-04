@@ -20,9 +20,11 @@ func load_timeline(timeline:Timeline) -> void:
 func reload() -> void:
 	set_meta("start", OS.get_unix_time())
 	_unload_events()
+	if not _timeline:
+		return
 	_events_to_load = _timeline.get_events()
 	_load_events()
-	pass
+
 
 func _load_events() -> void:
 	var event:Event = _events_to_load.pop_front()
@@ -31,7 +33,10 @@ func _load_events() -> void:
 #		print_debug("Took: ", get_meta("end")-get_meta("start"))
 		return
 	
-	var event_node:_EventNode = event_node_scene.instance() as _EventNode
+	var event_node:_EventNode = event.get("custom_event_node") as _EventNode
+	if not event_node:
+		event_node = event_node_scene.instance() as _EventNode
+		
 	event_node.event = event
 	event_node.event_index = _timeline.get_events().find(event)
 	event_node.connect("ready", event_node, "_fake_ready")

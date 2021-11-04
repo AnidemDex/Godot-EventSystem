@@ -9,8 +9,8 @@
 [node name="EventNode" type="PanelContainer"]
 margin_left = 1.0
 margin_top = 179.0
-margin_right = 327.0
-margin_bottom = 201.0
+margin_right = 505.0
+margin_bottom = 205.0
 focus_mode = 2
 theme = ExtResource( 1 )
 script = ExtResource( 5 )
@@ -21,9 +21,9 @@ DrawNodePath = NodePath("HBoxContainer/HBoxContainer/Control")
 NameContainerPath = NodePath("HBoxContainer/NameContainer")
 EventIconPath = NodePath("HBoxContainer/NameContainer/HBoxContainer/Icon")
 EventNamePath = NodePath("HBoxContainer/NameContainer/HBoxContainer/EventName")
-DescContainerPath = NodePath("HBoxContainer/DescContainer")
-EventDescPath = NodePath("HBoxContainer/DescContainer/HBoxContainer/EventDesc")
-EventIdxPath = NodePath("HBoxContainer/DescContainer/HBoxContainer/EventIdx")
+DescContainerPath = NodePath("HBoxContainer/VBoxContainer/DescContainer")
+EventDescPath = NodePath("HBoxContainer/VBoxContainer/DescContainer/HBoxContainer/EventDesc")
+EventIdxPath = NodePath("HBoxContainer/VBoxContainer/DescContainer/HBoxContainer/EventIdx")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 margin_right = 504.0
@@ -42,9 +42,9 @@ rect_min_size = Vector2( 32, 0 )
 margin_left = 32.0
 margin_right = 153.0
 margin_bottom = 22.0
-mouse_filter = 1
 mouse_default_cursor_shape = 13
 size_flags_horizontal = 3
+size_flags_vertical = 0
 size_flags_stretch_ratio = 2.0
 custom_styles/panel = ExtResource( 2 )
 
@@ -77,9 +77,15 @@ margin_right = 109.0
 margin_bottom = 14.0
 text = "{EventName}"
 
-[node name="DescContainer" type="PanelContainer" parent="HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 margin_left = 153.0
 margin_right = 504.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 8.0
+
+[node name="DescContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer"]
+margin_right = 351.0
 margin_bottom = 22.0
 mouse_filter = 1
 mouse_default_cursor_shape = 2
@@ -90,7 +96,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/DescContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/DescContainer"]
 margin_left = 12.0
 margin_top = 4.0
 margin_right = 343.0
@@ -100,23 +106,22 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EventDesc" type="Label" parent="HBoxContainer/DescContainer/HBoxContainer"]
+[node name="EventDesc" type="Label" parent="HBoxContainer/VBoxContainer/DescContainer/HBoxContainer"]
 margin_right = 256.0
 margin_bottom = 14.0
 rect_min_size = Vector2( 256, 0 )
 size_flags_horizontal = 3
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "{EventDescriptionPreview}"
 clip_text = true
+max_lines_visible = 1
 
-[node name="VSeparator" type="VSeparator" parent="HBoxContainer/DescContainer/HBoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer/VBoxContainer/DescContainer/HBoxContainer"]
 margin_left = 256.0
 margin_right = 260.0
 margin_bottom = 14.0
 
-[node name="EventIdx" type="Label" parent="HBoxContainer/DescContainer/HBoxContainer"]
+[node name="EventIdx" type="Label" parent="HBoxContainer/VBoxContainer/DescContainer/HBoxContainer"]
 margin_left = 260.0
 margin_right = 331.0
 margin_bottom = 14.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "{Event_Idx}"

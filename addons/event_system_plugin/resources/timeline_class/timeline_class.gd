@@ -4,11 +4,19 @@ class_name Timeline, "res://addons/event_system_plugin/assets/icons/timeline_ico
 
 # Can't reference:
 #	- EventManager node
+#	- Event
 
-var last_event:int = -1
+var last_event = null
+var next_event = null
+var _curr_evnt_idx:int = -1
 
 var _events:Array = []
+var _event_queue:Array = []
 var _can_loop:bool = false setget ,can_loop
+
+
+func initialize() -> void:
+	_event_queue = get_events()
 
 
 func add_event(event, at_position=-1) -> void:
@@ -34,17 +42,9 @@ func get_events() -> Array:
 
 
 func get_next_event() -> Resource:
-	if _events.empty():
-		return null
-	
-	var next_event_idx:int = last_event+1
-	if next_event_idx < _events.size():
-		return _events[next_event_idx]
-	
-	if _can_loop:
-		last_event = 0
-	
-	return _events[last_event]
+	_curr_evnt_idx += 1
+	_update_last_n_next_events()
+	return _event_queue.pop_front()
 
 
 func can_loop() -> bool:
@@ -52,26 +52,36 @@ func can_loop() -> bool:
 
 
 func get_previous_event() -> Resource:
-	if _events.empty():
-		return null
+	return null
+
+
+func _update_last_n_next_events() -> void:
+	var _l_evnt_idx = _curr_evnt_idx-1
+	var _n_evnt_idx = _curr_evnt_idx+1
 	
-	var prev_event_idx:int = last_event-1
+	if _l_evnt_idx >= 0 and _l_evnt_idx < _events.size():
+		last_event = _events[_l_evnt_idx]
+	else:
+		last_event = null
 	
-	if prev_event_idx > -1:
-		return _events[prev_event_idx]
-	
-	if _can_loop:
-		last_event = _events.size()-1
-	
-	return _events[last_event]
+	if _n_evnt_idx >= 0 and _n_evnt_idx < _events.size():
+		next_event = _events[_n_evnt_idx]
+	else:
+		next_event = null
 
 
 func _init() -> void:
 	_events = []
+	_event_queue = []
+	resource_name = get_class()
 
 
 func _to_string() -> String:
-	return "[{class}:{id}]".format({"class":"Timeline", "id":get_instance_id()})
+	return "[{class}:{id}]".format({"class":get_class(), "id":get_instance_id()})
+
+
+func get_class() -> String: return "Timeline"
+
 
 func _get_property_list() -> Array:
 	var p = []

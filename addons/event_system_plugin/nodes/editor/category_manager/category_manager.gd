@@ -24,6 +24,7 @@ func add_event(event_script:Script) -> void:
 
 func add_category(category_name:String) -> void:
 	var category_node:Node = category.instance()
+	var separator = VSeparator.new()
 	category_node.set("category", category_name)
 	category_node.connect("ready", category_node, "_fake_ready")
 	category_node.connect("event_pressed", self, "_on_EventButton_pressed")
@@ -31,6 +32,13 @@ func add_category(category_name:String) -> void:
 	categories[category_name] = category_node
 	
 	categories_container.add_child(category_node)
+	categories_container.add_child(separator)
+
+
+func clear_all() -> void:
+	categories = {}
+	for child in categories_container.get_children():
+		child.queue_free()
 
 
 func _on_EventButton_pressed(event_script:Script) -> void:

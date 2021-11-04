@@ -12,8 +12,9 @@ export(NodePath) var CategoryManagerPath:NodePath
 export(NodePath) var EventContainerPath:NodePath
 
 var _UndoRedo:UndoRedo
+var _PluginScript:EditorPlugin
 var _edited_resource:Timeline
-var _registered_events:Array = load("res://addons/event_system_plugin/resources/registered_events/registered_events.tres")["events"]
+var _registered_events:Resource = load("res://addons/event_system_plugin/resources/registered_events/registered_events.tres")
 var _separator_node:Control
 var _last_focused_event_node:Control
 
@@ -25,25 +26,27 @@ onready var _timeline_displayer:_TimelineDisplayer = get_node(EventContainerPath
 func fake_ready() -> void:
 	_timeline_displayer.set_drag_forwarding(self)
 	get_tree().root.connect("gui_focus_changed", self, "_on_global_focus_changed", [], CONNECT_DEFERRED)
+	_registered_events.connect("changed", self, "_on_RegisteredEvents_changed")
 
 
 func edit_resource(resource) -> void:
-	if _edited_resource == resource:
-		_timeline_displayer.reload()
-		return
-	
 	if _edited_resource:
 		if _edited_resource.is_connected("changed", _timeline_displayer, "reload"):
 			_edited_resource.disconnect("changed", _timeline_displayer, "reload")
 	
-	_edited_resource = resource
+	_edited_resource = resource as Timeline
+	_UndoRedo.clear_history(false)
 	
 	_update_values()
 
 
 func _update_values() -> void:
 	if _edited_resource == null:
-		push_error("No resource to edit")
+		_timeline_displayer.call("_unload_events")
+	
+	elif not _edited_resource is Timeline:
+		_edited_resource = null
+		push_error(str(_edited_resource) + " is not Timeline")
 		_timeline_displayer.call("_unload_events")
 		return
 	
@@ -54,21 +57,33 @@ func _update_values() -> void:
 
 
 func _connect_resource_signals() -> void:
+	if not _edited_resource:
+		return
+	
 	if not _edited_resource.is_connected("changed", _timeline_displayer, "reload"):
 		_edited_resource.connect("changed", _timeline_displayer, "reload")
 
 
 func _update_displayed_name() -> void:
-	var _name:String = _edited_resource.resource_name
+	var _name:String = "[Load a Timeline to create and edit events]"
 	
-	if _name == "":
-		_name = _edited_resource.resource_path.get_file()
+	if _edited_resource:
+		_name = _edited_resource.resource_path
 	
 	_name_node.text = _name
 
 
 func _generate_event_buttons() -> void:
-	for event in _registered_events:
+	if not _edited_resource:
+		_category_manager.clear_all()
+		return
+	
+	var _events:Array = _registered_events["events"].duplicate()
+	for event in _events:
+		if not(event.get_base_script() == Event):
+			# Someone forgots that the resource is only for event scripts and nothing else.
+			# Let's give it a hand!
+			continue
 		_category_manager.add_event(event)
 
 
@@ -80,7 +95,9 @@ func _generate_separator_node() -> void:
 
 
 func _update_timeline_displayer() -> void:
-	_timeline_displayer.load_timeline(_edited_resource)
+	if _edited_resource:
+		_timeline_displayer.load_timeline(_edited_resource)
+	_timeline_displayer.reload()
 
 
 func _add_event(event:Event, at_position:int=-1) -> void:
@@ -109,6 +126,13 @@ func _on_CategoryManager_event_pressed(event:Event) -> void:
 func _on_TimelineDisplayer_event_node_added(event_node:Control) -> void:
 	event_node.set_drag_forwarding(self)
 	event_node.connect("gui_input", self, "_on_EventNode_gui_input", [event_node])
+	if event_node.has_signal("timeline_selected"):
+		event_node.connect("timeline_selected", self, "_on_EventNode_timeline_selected")
+
+
+func _on_RegisteredEvents_changed() -> void:
+	_category_manager.clear_all()
+	_generate_event_buttons()
 
 
 func _on_global_focus_changed(control:Control) -> void:
@@ -129,6 +153,48 @@ func _on_EventNode_gui_input(event: InputEvent, event_node) -> void:
 			var _event = event_node.get("event")
 			_remove_event(_event)
 			accept_event()
+
+
+func _on_EventNode_timeline_selected(timeline:Timeline) -> void:
+	if not timeline:
+		return
+	
+	var _timeline_popup := AcceptDialog.new()
+	_timeline_popup.connect("ready", _timeline_popup, "popup_centered_ratio", [0.35])
+	_timeline_popup.connect("popup_hide", _timeline_popup, "queue_free")
+	_timeline_popup.connect("hide", _timeline_popup, "queue_free")
+	_timeline_popup.rect_clip_content = false
+	_timeline_popup.window_title = "Timeline Preview"
+	var _edit_button = _timeline_popup.add_button("Edit timeline", true, "")
+	_edit_button.connect("pressed", _PluginScript, "_on_TimelineEditor_preview_edit_pressed", [timeline])
+	_edit_button.connect("pressed", _timeline_popup, "hide")
+	var _scroll := ScrollContainer.new()
+	_timeline_popup.add_child(_scroll)
+	var _editor_duplicate := _TimelineDisplayer.new()
+	
+	_editor_duplicate.connect("ready", _editor_duplicate, "load_timeline", [timeline])
+	_scroll.add_child(_editor_duplicate)
+	
+	add_child(_timeline_popup)
+
+
+func _on_LoadTimelineButton_pressed() -> void:
+	var _file_popup := EditorFileDialog.new()
+	_file_popup.theme = Theme.new()
+	_file_popup.connect("ready", _file_popup, "popup_centered_ratio")
+	_file_popup.connect("file_selected", self, "_on_FilePopup_file_selected")
+	_file_popup.connect("popup_hide", _file_popup, "queue_free")
+	_file_popup.mode = 0
+	_file_popup.add_filter("*.tres;Timeline Resource")
+	_file_popup.add_filter("*.res;Timeline Resource")
+	_file_popup.popup_exclusive = true
+	add_child(_file_popup)
+
+
+func _on_FilePopup_file_selected(file_path:String) -> void:
+	edit_resource(load(file_path))
+
+
 
 ###########
 # Drag&Drop(TM)

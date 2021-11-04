@@ -49,7 +49,8 @@ func add_event(event:Resource) -> void:
 	event_button.size_flags_vertical = SIZE_EXPAND_FILL
 	event_button.rect_min_size = Vector2(24,24)
 	
-	event_button.hint_tooltip = str(event.get("event_hint"))
+	var event_hint := "{event_name}\n-----\n{event_hint}"
+	event_button.hint_tooltip = event_hint.format({"event_name":event.get("event_name"), "event_hint":event.get("event_hint")})
 	
 	event_container.add_child(event_button)
 	
