@@ -16,10 +16,12 @@ See, edit and control events in a timeline. The events will be executed in order
 
 ## 🚩 Event class
 ![Event Class](./docs/images/custom_event.png)
+
 Create and modify your own events, making them do exactly what you want them to do anywhere in the game.
 
 ## 🎬 Event Manager
-![Event Manager](./docs/images/custom_event.png)
+![Event Manager](./docs/images/event_manager.png)
+
 A node prepared exclusively to run your timeline. _You don't need to worry about managing the timeline, only about when to advance in it._
 
 # Installation
