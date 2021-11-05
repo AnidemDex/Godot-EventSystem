@@ -8,6 +8,8 @@ This plugin doesn't do much on its own, it promises to help you with the task of
 
 Whether you want to create a dialog sequence, verify that certain events have been fulfilled or an incredibly complex case maker, the possibilities are almost endless.
 
+> Join us on Discord: https://discord.gg/83YgrKgSZX
+
 # Features
 ## 🧵 Timeline editor
 A visual tool for viewing and editing sequences of events, as well as the individual properties of each event.
