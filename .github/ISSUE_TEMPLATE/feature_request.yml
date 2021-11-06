@@ -19,3 +19,11 @@ body:
         Document things like how the timeline works or what does its classes and what are their properties"
     validations:
       required: true
+
+  - type: textarea
+    attributes:
+      label: Adittional information
+      description: >
+        If you want to add more information related to this proposal, add it here. 
+        Things like mockups, videos, detailed step to step to integrate the request,
+        how your proposal will work or anything that you want.
