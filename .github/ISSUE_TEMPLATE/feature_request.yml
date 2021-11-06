@@ -9,3 +9,13 @@ body:
         This is important to know the *context* in which the feature is being proposed.
         Features used in real-world projects are more likely to be added.
       placeholder: Example - "A dialogue system using this plugin"
+
+  - type: textarea
+     attributes:
+       label: >
+         Describe the feature / enhancement and how it helps to overcome the problem or limitation
+       placeholder: >
+         Example - "Add documentation to the plugin to know how to use it. Document things like 
+         how the timeline works or what does its classes and what are their properties"
+     validations:
+       required: true
