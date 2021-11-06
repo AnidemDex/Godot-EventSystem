@@ -1,0 +1,21 @@
+name: "\U0001F41E Bug report"
+description: >
+  Something is broken or doesn't works as it should be? Create a report to help
+  us improve
+labels: bug
+body:
+  - type: textarea
+    attributes:
+      label: System Information
+      description: |
+        Examples:
+          - **OS:** Windows 10 x64
+          - **GODOT version:** 3.4
+      value: |
+        - OS:
+        - GODOT version:
+      render: markdown
+      vadilations:
+        required: false
+  - type: dropdown
+  
