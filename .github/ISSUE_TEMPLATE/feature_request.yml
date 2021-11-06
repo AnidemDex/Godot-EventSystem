@@ -2,7 +2,7 @@ name: "\U0001F58BFeature request"
 description: Suggest an idea for this project
 labels: enhancement
 body:
-  - type: markdown
+  type: textarea
     attributes:
       label: Describe the project you are working on
       description: >
