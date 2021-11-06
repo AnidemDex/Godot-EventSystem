@@ -32,8 +32,8 @@ body:
     attributes:
       label: Issue description
       description: |
-      Describe your issue briefly. What doesn't work, and how do you expect it to work instead?
-      You can include images or videos with drag and drop, and format code blocks or logs with <code>```</code> tags.
+        Describe your issue briefly. What doesn't work, and how do you expect it to work instead?
+        You can include images or videos with drag and drop, and format code blocks or logs with <code>```</code> tags.
     validations:
       required: true
    
