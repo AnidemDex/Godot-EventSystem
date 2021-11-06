@@ -34,6 +34,9 @@ body:
       description: |
         Describe your issue briefly. What doesn't work, and how do you expect it to work instead?
         You can include images or videos with drag and drop, and format code blocks or logs with <code>```</code> tags.
+      placeholder: |
+        I tried to make an event, started the scene and something went wrong...
+        Console log says that...
     validations:
       required: true
    
