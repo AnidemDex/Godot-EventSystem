@@ -28,3 +28,30 @@ body:
     validations:
       required: true
   
+  - type: textarea
+    attributes:
+      label: Issue description
+      description: |
+      Describe your issue briefly. What doesn't work, and how do you expect it to work instead?
+      You can include images or videos with drag and drop, and format code blocks or logs with <code>```</code> tags.
+    validations:
+      required: true
+   
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: |
+        List of steps or sample code that reproduces the issue. Having reproducible issues is a prerequisite for contributors to be able to solve them.
+        If you include a minimal reproduction project below, you can detail how to use it here.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Workaround
+      description: Have you managed to solve it by your own or found a way to avoid this issue? Let us know!
