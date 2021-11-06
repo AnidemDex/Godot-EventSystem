@@ -37,3 +37,5 @@ addons/*
 # And documentation, for sure!
 !/docs/
 !/docs/*
+# No forget the gitbook configuration file
+!.gitbook.yaml
