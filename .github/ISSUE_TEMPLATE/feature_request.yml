@@ -14,3 +14,8 @@ body:
     attributes:
       label: >
         Describe the feature / enhancement and how it helps to overcome the problem or limitation
+      placeholder: >
+        Example - "Add documentation to the plugin to know how to use it. Document things like 
+        how the timeline works or what does its classes and what are their properties"
+     validations:
+       required: true
