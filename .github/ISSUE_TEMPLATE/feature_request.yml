@@ -2,15 +2,13 @@ name: "\U0001F58BFeature request"
 description: Suggest an idea for this project
 labels: enhancement
 body:
-  - type: textarea
+  - type: markdown
     attributes:
       label: Describe the project you are working on
       description: >
         This is important to know the context in which the feature is being proposed. 
         Features used in real-world projects are more likely to be added.
       placeholder: Example - "I'm working on a dialogue system using this plugin..."
-    validations:
-      required: false
       
   - type: textarea
     attributes:
