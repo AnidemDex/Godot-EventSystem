@@ -4,18 +4,27 @@ description: >
   us improve
 labels: bug
 body:
-  - type: textarea
+  - type: markdown
     attributes:
-      label: System Information
-      description: |
-        Examples:
-          - **OS:** Windows 10 x64
-          - **GODOT version:** 3.4
-      value: |
-        - OS:
-        - GODOT version:
-      render: markdown
-      vadilations:
-        required: false
+      value: "## System Information"
+     
+  - type: input
+    attributes:
+      label: OS
+      description: Information about your Operating System
+      placeholder: Windows 10 x64
+      
+  - type: input
+    attributes:
+      label: Godot Version
+      placeholder: 3.4.stable, 4.0.dev (3041becc6)
+      
   - type: dropdown
+    attributes:
+      multiple: false
+      label: Plugin Version
+      options: 
+        - 1.0 (lastest)
+      validations:
+        required: true
   
