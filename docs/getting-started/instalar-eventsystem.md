@@ -1,7 +1,7 @@
 # Instalar EventSystem
 
 {% hint style="info" %}
-If you want more information about installing plugins in Godot, please refer to [official documentation page](https://docs.godotengine.org/en/stable/tutorials/plugins/editor/installing\_plugins.html).
+Si quieres mas información sobre instalar plugins en Godot, por favor, revisa la [documentación oficial](https://docs.godotengine.org/es/stable/tutorials/plugins/editor/installing\_plugins.html).
 {% endhint %}
 
 ## Descarga
