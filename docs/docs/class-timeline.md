@@ -6,7 +6,7 @@ description: Clase base para todos los recursos Timeline
 
 **Hereda:** Resource
 
-## Descripción
+## Descripción <a href="description" id="description"></a>
 
 Un timeline es un contenedor de datos sobre los eventos.
 
@@ -14,37 +14,37 @@ Este recurso solo se encarga de mantener una referencia ordenada a los eventos r
 
 Algo similar a una lista con eventos, pero con pasos extra y una pizca de paprika.
 
-## Propiedades
+## Propiedades <a href="properties" id="properties"></a>
 
-| Tipo                    | Nombre      | Valor por defecto                      |
-| ----------------------- | ----------- | -------------------------------------- |
-| [Event](class-event.md) | last\_event | <mark style="color:red;">`null`</mark> |
-| [Event](class-event.md) | next\_event | <mark style="color:red;">`null`</mark> |
+| Tipo                    | Nombre                                                 | Valor por defecto                      |
+| ----------------------- | ------------------------------------------------------ | -------------------------------------- |
+| [Event](class-event.md) | [last\_event](class-timeline.md#property\_last\_event) | <mark style="color:red;">`null`</mark> |
+| [Event](class-event.md) | [next\_event](class-timeline.md#property\_next\_event) | <mark style="color:red;">`null`</mark> |
 
-## Métodos
+## Métodos <a href="methods" id="methods"></a>
 
-| Type  | Name                                                              |
-| ----- | ----------------------------------------------------------------- |
-| void  | initialize( )                                                     |
-| void  | add\_event ( [Event ](class-event.md)event, int at\_position=-1 ) |
-| void  | erase\_event( [Event ](class-event.md)event )                     |
-| void  | remove\_event ( int position )                                    |
-| Array | get\_events( )                                                    |
-| Event | get\_next\_event( )                                               |
-| bool  | can\_loop( )                                                      |
-| Event | get\_previous\_event( )                                           |
+| Tipo                    | Nombre                                                                                                    |
+| ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| void                    | [initialize](class-timeline.md#method\_initialize)( )                                                     |
+| void                    | [add\_event ](class-timeline.md#method\_add\_event)( [Event ](class-event.md)event, int at\_position=-1 ) |
+| void                    | [erase\_event](class-timeline.md#method\_erase\_event)( [Event ](class-event.md)event )                   |
+| void                    | [remove\_event ](class-timeline.md#method\_remove\_event)( int position )                                 |
+| Array                   | [get\_events](class-timeline.md#method\_get\_events)( )                                                   |
+| [Event](class-event.md) | [get\_next\_event](class-timeline.md#method\_get\_next\_event)( )                                         |
+| bool                    | [can\_loop](class-timeline.md#method\_can\_loop)( )                                                       |
+| [Event](class-event.md) | [get\_previous\_event](class-timeline.md#method\_get\_previous\_event)( )                                 |
 
-## Descripción de las propiedades
+## Descripción de las propiedades <a href="property_descriptions" id="property_descriptions"></a>
 
 ### [Event ](class-event.md)last\_event <a href="property_last_event" id="property_last_event"></a>
 
 El ultimo evento usado según la fila temporal.
 
-### Event next\_event <a href="property_next_event" id="property_next_event"></a>
+### [Event ](class-event.md)next\_event <a href="property_next_event" id="property_next_event"></a>
 
 El siguiente evento a usar según la fila temporal. (Es el candidato mas probable a ser usado cuando se hace la llamada a `get_next_event()`.&#x20;
 
-## Descripción de los métodos
+## Descripción de los métodos <a href="method_descriptions" id="method_descriptions"></a>
 
 ### void initialize() <a href="method_initialize" id="method_initialize"></a>
 
@@ -68,10 +68,10 @@ Devuelve la lista interna de los eventos registrados en el recurso. La lista ret
 
 Modificaciones a los eventos internos de la lista si afectarán a los eventos originales.
 
-### Event get\_next\_event() <a href="method_get_next_event" id="method_get_next_event"></a>
+### [Event ](class-event.md)get\_next\_event() <a href="method_get_next_event" id="method_get_next_event"></a>
 
 Devuelve el siguiente evento en cola o null en caso de que no haya ninguno. El metodo [initilize](class-timeline.md#void-initialize) debe llamarse una sola vez antes de usar esta función
 
 ### bool can\_loop() <a href="method_can_loop" id="method_can_loop"></a>
 
-### Event get\_previous\_event() <a href="method_get_previous_event" id="method_get_previous_event"></a>
+### [Event ](class-event.md)get\_previous\_event() <a href="method_get_previous_event" id="method_get_previous_event"></a>
