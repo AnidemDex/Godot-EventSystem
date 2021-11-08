@@ -12,5 +12,5 @@
 ## 📓 Documentación <a href="docs" id="docs"></a>
 
 * [EventManager](docs/class-event-manager.md)
-* [Event Resource](docs/class-event.md)
+* [Event](docs/class-event.md)
 * [Timeline Resource](docs/class-timeline.md)
