@@ -99,13 +99,13 @@ Este método debe ser sobrescrito si se planea crear un evento personalizado.
 
 No debe ser llamado directamente.
 
-### void execute() <a href="method-execute" id="method-execute"></a>
+### void execute() <a href="method_execute" id="method_execute"></a>
 
 Ejecuta el evento.
 
 Este método no debe ser sobrescrito si se planea crear un evento personalizado.
 
-### void finish() <a href="method-finish" id="method-finish"></a>
+### void finish() <a href="method_finish" id="method_finish"></a>
 
 Debe ser llamado al completar el evento para indicar que el evento ha finalizado.
 
