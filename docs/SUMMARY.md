@@ -4,10 +4,10 @@
 
 ## ⚡ Getting Started
 
-* [Instalar EventSystem](getting-started/instalar-eventsystem.md)
-* [Usando el Editor de Eventos](getting-started/usando-el-editor-de-eventos.md)
-* [Usando el nodo EventManager](getting-started/usando-el-nodo-eventmanager.md)
-* [Creando un evento](getting-started/creando-un-evento.md)
+* [Instalar EventSystem](getting-started/installing-the-plugin.md)
+* [Usando el Editor de Eventos](getting-started/using-timelineeditor.md)
+* [Usando el nodo EventManager](getting-started/using-eventmanager.md)
+* [Creando un evento](getting-started/creating-a-custom-event.md)
 
 ## 📓 Documentación <a href="docs" id="docs"></a>
 

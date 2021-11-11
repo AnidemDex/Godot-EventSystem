@@ -25,13 +25,13 @@ Este plugin no hace mucho por su cuenta, pero promete ayudarte con la tarea de a
 Aquí hay algunas guías que puedes seguir para empezar a utilizar el plugin sin mayor complicación:
 
 {% content-ref url="getting-started/instalar-eventsystem.md" %}
-[instalar-eventsystem.md](getting-started/instalar-eventsystem.md)
+[instalar-eventsystem.md](getting-started/installing-the-plugin.md)
 {% endcontent-ref %}
 
 {% content-ref url="getting-started/creando-un-evento.md" %}
-[creando-un-evento.md](getting-started/creando-un-evento.md)
+[creando-un-evento.md](getting-started/creating-a-custom-event.md)
 {% endcontent-ref %}
 
 {% content-ref url="getting-started/usando-el-editor-de-eventos.md" %}
-[usando-el-editor-de-eventos.md](getting-started/usando-el-editor-de-eventos.md)
+[usando-el-editor-de-eventos.md](getting-started/using-timelineeditor.md)
 {% endcontent-ref %}
