@@ -91,7 +91,7 @@ Representa la categoría a la que pertenece este evento.
 
 ## Descripción de métodos
 
-### void \_execute()
+### void \_execute() <a href="method_descriptions" id="method_descriptions"></a>
 
 Es llamado cuando se ejecuta el evento.
 
@@ -99,13 +99,13 @@ Este método debe ser sobrescrito si se planea crear un evento personalizado.
 
 No debe ser llamado directamente.
 
-### void execute()
+### void execute() <a href="method-execute" id="method-execute"></a>
 
 Ejecuta el evento.
 
 Este método no debe ser sobrescrito si se planea crear un evento personalizado.
 
-### void finish()
+### void finish() <a href="method-finish" id="method-finish"></a>
 
 Debe ser llamado al completar el evento para indicar que el evento ha finalizado.
 
