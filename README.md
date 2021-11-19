@@ -37,5 +37,5 @@ If you want more information about installing plugins in Godot, please refer to 
 
 # Documentation
 
-All the information about the plugin you will find at [documentation page](https://anidemdex.gitbook.io/godot-dialog-plugin/). (WIP)
+All the information about the plugin you will find at [documentation page](https://godotplugins.gitbook.io/eventsystem/). (WIP)
 
