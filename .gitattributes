@@ -8,6 +8,7 @@
 /LICENSE            export-ignore
 /LICENSE.md         export-ignore
 /README.md          export-ignore
+/CONTRIBUTING.md    export-ignore
 .images/            export-ignore
 .github/            export-ignore
 tests/              export-ignore
