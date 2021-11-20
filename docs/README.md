@@ -24,14 +24,14 @@ This plugin doesn't do much on its own, but it promises to help you with the tas
 
 Here are some tutorials you can follow to get started with the plugin without further complication:
 
-{% content-ref url="getting-started/instalar-eventsystem.md" %}
-[instalar-eventsystem.md](getting-started/installing-the-plugin.md)
+{% content-ref url="getting-started/installing-the-plugin.md" %}
+[installing-the-plugin.md](getting-started/installing-the-plugin.md)
 {% endcontent-ref %}
 
-{% content-ref url="getting-started/creando-un-evento.md" %}
-[creando-un-evento.md](getting-started/creating-a-custom-event.md)
+{% content-ref url="getting-started/using-timelineeditor.md" %}
+[using-timelineeditor.md](getting-started/using-timelineeditor.md)
 {% endcontent-ref %}
 
-{% content-ref url="getting-started/usando-el-editor-de-eventos.md" %}
-[usando-el-editor-de-eventos.md](getting-started/using-timelineeditor.md)
+{% content-ref url="getting-started/using-eventmanager.md" %}
+[using-eventmanager.md](getting-started/using-eventmanager.md)
 {% endcontent-ref %}
