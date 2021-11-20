@@ -1,53 +1,53 @@
-# Instalar EventSystem
+# Installing EventSystem
 
 {% hint style="info" %}
-Si quieres mas información sobre instalar plugins en Godot, por favor, revisa la [documentación oficial](https://docs.godotengine.org/es/stable/tutorials/plugins/editor/installing\_plugins.html).
+If you want more information about installing plugins in Godot, please check the [official documentation](https://docs.godotengine.org/es/stable/tutorials/plugins/editor/installing\_plugins.html).
 {% endhint %}
 
-## Descarga
+## Download
 
-Hay varias opciones para descargar el plugin. El método que utilices solo influirá en la versión que se va a descargar.
+There are several options for downloading the plugin. The method you use will only influence the version to be downloaded.
 
-### Opción A: Versión estable desde el repositorio
+### Option A: Stable version from the repository
 
-![Opción A](../.gitbook/assets/tutorial\_option\_a.png)
+![Option A](../.gitbook/assets/tutorial\_option\_a.png)
 
-Descarga la ultima versión estable lanzada desde el repositorio.
+Download the latest stable version released from the repository.
 
 ![](../.gitbook/assets/tutorial\_option\_a\_1.png)
 
-Presiona sobre `EventSystem_v?.zip` donde `?` será el numero de la versión. Empezará la descarga de un archivo comprimido, el cual contiene los archivos del plugin.
+Click on `EventSystem_v?.zip` where `?` will be the version number. It will start downloading a compressed file, which contains the plugin files.
 
-### Opción B: Ultima versión sin probar del repositorio
+### Option B: Latest untested version from the repository
 
-![Opción B](../.gitbook/assets/tutorial\_option\_b.png)
+![Option B](../.gitbook/assets/tutorial\_option\_b.png)
 
 {% hint style="warning" %}
-A este tipo de versiones se les suele atribuir un nombre similar a _versión neutral_, y hace referencia a versiones que están a la par con el estado actual del control de versiones.
+This type of version is often referred to by a name similar to _neutral version_, and refers to versions that are on the current state of version control.
 
-Esto no significa que esté funcionando o sea utilizable. Si el estado actual del repositorio incluyó algún cambio que hizo que el plugin empezase a fallar, versión neutral también fallará.
+This does not mean that it is working or usable. If the current state of the repository included some change that caused the plugin to start crashing, neutral version will also crash.
 {% endhint %}
 
-Esta descarga te permite bajar una versión sin probar del repositorio, la cual está con las ultimas características añadidas al plugin (nuevamente, aun sin probar). No se aconseja su uso.
+This download allows you to download an untested version from the repository, which is with the latest features added to the plugin (again, still untested). It is not recommended for use.
 
-### Opción C: Versión estable desde AssetLib
+### Option C: Stable version from AssetLib
 
 {% hint style="info" %}
-El plugin aun no es añadido al AssetLib de Godot. Se actualizará esta sección de la documentación cuando eso suceda.
+The plugin is not yet added to the Godot AssetLib. This section of the documentation will be updated when that happens.
 {% endhint %}
 
-## Instalación
+## Installation
 
-La instalación del plugin puede variar según la opción que escogiste para descargar el plugin.
+The installation of the plugin may vary depending on the option you chose to download the plugin.
 
-### Opción A y B
+### Option A and B
 
 ![](../.gitbook/assets/tutorial\_installing\_from\_zip.png)
 
-Extrae la carpeta `addons` a la raíz de la carpeta donde se encuentra tu proyecto.
+Extract the `addons` folder to the root of the folder where your project is located.
 
-## Habilitar el plugin
+## Enable the plugin
 
-En los ajustes del proyecto, en la pestaña `Plugin` marca la casilla de `Habilitar` .
+In the project settings, in the `Plugin` tab check the `Enable` box.
 
 ![](../.gitbook/assets/tutorial\_enabling.png)

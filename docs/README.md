@@ -1,28 +1,28 @@
 ---
 description: >-
-  Información sobre EventSystem. Un plugin que te ayudará a manejar eventos en
-  el juego.
+  Information about EventSystem. A plugin that will help you to manage events in
+  the game.
 ---
 
-# 🧐 Información
+# 🧐 Information
 
 {% hint style="warning" %}
-¡Hola, navegante de internet! En este momento estoy escribiendo intensamente largas lineas de documentación mientras lees estas lineas. Por favor, se paciente, trataré de tener toda la documentación lista lo mas pronto posible.
+Hello, internet surfer! At the moment I am intensively writing long lines of documentation as you read these lines. Please be patient, I will try to have all the documentation ready as soon as possible.
 {% endhint %}
 
 {% hint style="success" %}
-Puedes unirte al servidor de [Discord ](https://discord.gg/83YgrKgSZX)para darnos tus opiniones, preguntar sobre algo o pedir que algo sea añadido. Tambien puedes hacer esto abriendo un nuevo hilo en [github issues.](https://github.com/AnidemDex/Godot-EventSystem/issues)
+You can join the [Discord server](https://discord.gg/83YgrKgSZX)cto give feedback, ask a question about something or ask for something to be added. You can also do this by opening a new issue in [github issues](https://github.com/AnidemDex/Godot-EventSystem/issues).
 {% endhint %}
 
-EventSystem (de vez en cuando llamado _sistema de eventos_ para la página en español) es un plugin de Godot que te ayudará a gestionar eventos secuenciales, fácil de implementar y totalmente extensible, permitiéndote ejecutar fragmentos de código en orden de acuerdo a las condiciones que le des.
+EventSystem is a Godot plugin that will help you manage sequential events, easy to implement and fully extensible, allowing you to execute code snippets in order according to the conditions you give it.
 
-Este plugin no hace mucho por su cuenta, pero promete ayudarte con la tarea de ayudarte a controlar eventos. Estos eventos debes hacerlos por tu cuenta. Algunas tareas que se hacen comúnmente en código fueron incluidos al plugin.
+This plugin doesn't do much on its own, but it promises to help you with the task of helping you control events. These events you must do on your own. Some tasks that are commonly done in code were included in the plugin.
 
-## 🎉¿Por donde empezar?
+## 🎉Getting started
 
-### Guías:
+### Guides:
 
-Aquí hay algunas guías que puedes seguir para empezar a utilizar el plugin sin mayor complicación:
+Here are some tutorials you can follow to get started with the plugin without further complication:
 
 {% content-ref url="getting-started/instalar-eventsystem.md" %}
 [instalar-eventsystem.md](getting-started/installing-the-plugin.md)
