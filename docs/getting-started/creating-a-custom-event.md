@@ -1,52 +1,52 @@
-# Making a custom event
+# Creando un evento
 
-Events are the code fragments that the EventManager will execute, contained in a sequence (Timeline)..
+Los eventos son los fragmentos de código que el EventManager ejecutará, contenidos en una secuencia (Timeline).
 
-By default the plugin includes some events that correspond to tasks commonly performed in code: making a comment, a boolean check, setting a variable to a certain value, among others.
+Por defecto el plugin incluye algunos eventos que corresponden a tareas realizadas comúnmente en código: hacer un comentario, una comprobación booleana, establecer una variable a cierto valor, entre otros.
 
-You can create and add your own events to this system without much trouble, which gives you the ability to execute your own code snippets under your own rules.
+Puedes crear y añadir tus propios eventos a este sistema sin mayor problema, lo que te da la capacidad de ejecutar tus propios fragmentos de código bajo tus propias reglas.
 
 {% hint style="info" %}
-So far I have come up with the idea of creating a rhythm core, a Pokémon-style battle interaction and a [dialogue system](https://app.gitbook.com/o/ANe5SjHDLnAFjCnVwR4d/s/-MaUroYBpPsgfLKIUmns/). You can replicate this and more!
+Hasta el momento se me ha ocurrido la idea de crear un núcleo de ritmo, una interacción de batalla estilo Pokémon y un [sistema de dialogo](https://app.gitbook.com/o/ANe5SjHDLnAFjCnVwR4d/s/-MaUroYBpPsgfLKIUmns/) usando este plugin. ¡Tu puedes replicar esto y mas!
 {% endhint %}
 
-## Event's structure
+## Estructura de un evento
 
 ![](../.gitbook/assets/EventBehaviour.png)
 
-Here you can see the structure of how is (more or less) the logic used after the execution of an event:
+Aquí puedes ver la estructura de como es (mas o menos) la lógica empleada tras la ejecución de un evento:
 
-1. EventManager starts the sequence.&#x20;
-2. EventManager executes an event.
-3. The event emits the signal `event_started`.
-4. The event calls your `execute()` function.
-5. EventManager waits for the `event_finished` signal to know to continue with the next event.
+1. EventManager inicia la secuencia.&#x20;
+2. EventManager ejecuta un evento.
+3. El evento emite la señal `event_started`.
+4. El evento llama a su función `execute()`.
+5. EventManager espera la señal `event_finished` para saber que debe continuar con el siguiente evento.
 
-The process is repeated until there are no more events in the sequence.
+El proceso se repite hasta que no hay más eventos en la secuencia.
 
-## Make a script
+## Crea un script
 
-The script will be the heart of your event. What you put in it will be exactly what will be executed in the game.
+El script será el corazón de tu evento. Lo que pongas en él será exactamente lo que se ejecutará en el juego.
 
-Custom events are a script that extend [`Event`](../docs/class-event.md) and overwrite the function [`_execute()`](../docs/class-event.md#void-\_execute), indicating that they ended up calling the function [`finish()`](../docs/class-event.md#void-finish).
+Los eventos personalizados son un script que extienden [`Event`](../docs/class-event.md) y sobreescriben la función [`_execute()`](../docs/class-event.md#void-\_execute), indicando que acabaron llamando a la función [`finish()`](../docs/class-event.md#void-finish).
 
-### Example
+### Ejemplo
 
-Let's create an event that prints "Hello everyone!" (the classic _hello world_):
+Creemos un evento que imprima "¡Hola a todos!" (el clásico _hola mundo_):
 
 {% code title="res://evento_ejemplo.gd" %}
 ```gdscript
-# The script must inherit from Event or
-# any subclass that inherits from it.
+# El script debe heredar de Event o cualquier subclase que
+# herede de la misma.
 extends Event
 # you can give it a class_name if you want
 
-# Overwrite _execute() method
-# It will be called when EventManager arrives at this event.
+# Sobreescribe el metodo _execute()
+# Será llamado cuando EventManager llegue a este evento.
 func _execute() -> void:
-    # Here will be the body of our event.
-    # Whatever you want to happen, define it in this function
-    print("Hello everyone!")
+    # Aqui irá el cuerpo de nuestro evento.
+    # Lo que sea que quieras que pase, definelo en esta función
+    print("¡Hola a todos!")
     
     # Notify that your event is done and can continue to
     # the next event.
@@ -54,26 +54,26 @@ func _execute() -> void:
 ```
 {% endcode %}
 
-To use your newly created event (via code) just do this:
+Para usar tu recién creado evento (por medio de código) solo debes hacer esto:
 
 ```gdscript
-# Creates a sequence
+# Crea una secuencia
 var timeline := Timeline.new()
-# or use one you have already created
+# o usa una que ya habias creado
 timeline = load("res://path/to/timeline.tres") as DialogTimelineResource
 
-# Load your event script
+# Carga el script de tu evento
 var event_script := load("res://evento_ejemplo.gd")
 
-# And create a new instance of your event
+# Y crea una nueva instancia de tu evento
 var event := event_script.new() as Event
 
-# Now add your event to the timeline
+# Ahora añade tu evento al timeline
 timeline.add_event(event)
 
-# Finally, start the timeline sequence
+# Finalmente, inicia la secuencia de timeline
 
-# Assuming that "event_manager" is an EventManager
-# node in the scene
+# Asumiendo que "event_manager" es un nodo EventManager
+# en la escena
 event_manager.start_timeline(timeline)
 ```

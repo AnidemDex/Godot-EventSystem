@@ -1,6 +1,6 @@
-# Using the EventManager node
+# Usando el nodo EventManager
 
-The EventManager node is the one that will do the job of managing your sequence (Timeline), executing the events according to the conditions that you give it.
+El nodo EventManager es quien va a hacer la labor de gestionar tu secuencia (Timeline), ejecutando los eventos según las condiciones que le des.
 
-By default, all events come with an auto-advance option: `continue_at_end`; if this value is true, at the instant the event emits its `event_finished` signal, the event manager will execute the next event automatically. Otherwise, if `continue_at_end` is false, the event handler will wait for its `go_to_next_event` method to be called to execute the next event in the list.
+Por defecto, todos los eventos vienen con una opción de autoavance: `continue_at_end`; si ese valor es verdadero, en el instante en que el evento emita su señal `event_finished`, el gestor de eventos ejecutará el siguiente evento automáticamente. En caso contrario, `continue_at_end` es falso, el gestor de eventos esperará a que su metodo `go_to_next_event` sea llamado para ejecutar el siguiente evento en la lista.
 

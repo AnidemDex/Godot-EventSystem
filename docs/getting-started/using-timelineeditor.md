@@ -1,38 +1,38 @@
-# Using the Event Editor
+# Usando el Editor de Eventos
 
-![Event Editor](../.gitbook/assets/timeline.png)
+![Editor de eventos](../.gitbook/assets/timeline.png)
 
-The event editor is a visual tool for editing any Timeline event sequence as well as the events contained in it.
+El editor de eventos es una herramienta visual para editar cualquier secuencia de eventos Timeline así como los eventos contenidos en la misma.
 
-The event editor consists of 3 essential parts for modifying Timeline event sequences:
+El editor de eventos se compone de 3 partes esenciales para la modificación de secuencias de eventos Timeline:
 
-1. The event buttons
-2. The event list
-3. The events
+1. Los botones de eventos
+2. La lista de eventos
+3. Los eventos
 
-## Event buttons
+## Botones de eventos
 
 ![](../.gitbook/assets/event\_buttons\_toolbar.png)
 
-Press a button to add the event to the sequence. The event will be added under the selected event or at the end of the queue.
+Presiona un botón para añadir el evento a la secuencia. El evento se añadirá bajo el evento seleccionado o al final de la cola
 
 ![](../.gitbook/assets/tutorial\_timeline\_buttons.gif)
 
-Holding the mouse over the button allows you to see its description.
+Mantener el mouse encima del botón permite ver su descripción.
 
 ![](../.gitbook/assets/tutorial\_timeline\_buttons\_hover.gif)
 
-You can drag a button to generate an event that you can drop in the event list to add it at any position.
+Puedes arrastrar un botón para generar un evento que puedes soltar en la lista de eventos para añadirlo en cualquier posición.
 
 ![](../.gitbook/assets/tutorial\_timeline\_buttons\_drag\&drop.gif)
 
-## Event list
+## Lista de eventos
 
 ![](../.gitbook/assets/timeline\_with\_events.png)
 
-The event list shows all events contained in the Timeline.
+La lista de eventos muestra todos los eventos contenidos en el Timeline.
 
-You can drag and drop any event from its name to rearrange or delete it.
+Puedes arrastrar y soltar cualquier evento desde su nombre para reacomodarlo o eliminarlo.
 
 ![](../.gitbook/assets/tutorial\_timeline\_event\_drag\&drop.gif)
 
@@ -40,10 +40,10 @@ You can drag and drop any event from its name to rearrange or delete it.
 
 ## Eventos
 
-Event nodes are a visual representation of any event. Their structure is as follows:
+Los nodos de eventos son una representación visual de un evento cualquiera. Su estructura es la siguiente:
 
 ![](../.gitbook/assets/event\_node.png)
 
-Pressing an event will make its properties editable in the Godot inspector.
+Presionar un evento hará que sus propiedades sean editables en el inspector de Godot.
 
-Selecting an event and pressing the DEL (delete) button will remove the event from the Timeline.
+Seleccionar un evento y presionar el botón DEL (suprimir) eliminará el evento del Timeline.
