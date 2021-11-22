@@ -27,8 +27,8 @@ func _execute(caller=null) -> void:
 		var _queue:Array = []
 		for event_idx in range(event_index, _events.size()):
 			_queue.append(_events[event_idx])
-		for _event in _queue:
-			_timeline._event_queue.push_front(_event)
+		_events.append_array(_queue)
+		_timeline._event_queue = _events.duplicate()
 	
 	finish()
 
