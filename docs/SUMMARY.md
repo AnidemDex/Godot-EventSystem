@@ -1,6 +1,6 @@
 # Table of contents
 
-* [🧐 Information](README.md)
+* [🧐 Información](README.md)
 * [Changelog](changelog/README.md)
   * [\[1.x\] Stable](changelog/1.x.md)
 
