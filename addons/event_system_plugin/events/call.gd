@@ -1,5 +1,6 @@
 tool
 extends Event
+class_name EventCall
 
 export(String) var method:String = "" setget set_method
 export(Array) var args:Array = []
