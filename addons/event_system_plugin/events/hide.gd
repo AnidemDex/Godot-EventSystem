@@ -1,5 +1,6 @@
 tool
 extends Event
+class_name EventHide
 
 func _init() -> void:
 	event_color = Color("EB5E55")
