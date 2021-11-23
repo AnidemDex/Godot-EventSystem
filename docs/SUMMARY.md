@@ -2,7 +2,7 @@
 
 * [🧐 Information](README.md)
 * [Changelog](changelog/README.md)
-  * [\[1.0.0\] Stable](changelog/1.0.0-stable.md)
+  * [\[1.x\] Stable](changelog/1.0.0-stable.md)
 
 ## ⚡ Getting Started
 
