@@ -10,6 +10,7 @@ func _init() -> void:
 	event_icon = load("res://addons/event_system_plugin/assets/icons/event_icons/emit_signal.png") as Texture
 	event_preview_string = "Emit signal with [ '{data}' ] value"
 	event_hint = "Emits EventManager 'custom_signal' with passed value as string"
+	event_category = "Node"
 
 func _execute() -> void:
 	event_manager.emit_signal("custom_signal", data)
