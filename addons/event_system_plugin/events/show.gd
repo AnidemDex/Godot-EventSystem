@@ -1,5 +1,6 @@
 tool
 extends Event
+class_name EventShow
 
 func _init() -> void:
 	event_color = Color("EB5E55")
