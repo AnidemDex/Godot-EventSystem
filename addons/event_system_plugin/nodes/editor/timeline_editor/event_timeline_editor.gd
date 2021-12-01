@@ -80,10 +80,12 @@ func _generate_event_buttons() -> void:
 	
 	var _events:Array = _registered_events["events"].duplicate()
 	for event in _events:
-		if not(event.get_base_script() == Event):
+		var _dummy = event.new() as Event
+		if _dummy == null:
 			# Someone forgots that the resource is only for event scripts and nothing else.
 			# Let's give it a hand!
 			continue
+		_dummy = null
 		_category_manager.add_event(event)
 
 
