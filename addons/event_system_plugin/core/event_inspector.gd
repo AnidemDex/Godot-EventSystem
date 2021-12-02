@@ -24,4 +24,12 @@ func parse_category(object: Object, category: String) -> void:
 		category_node.hint_tooltip = object.get("event_hint")
 		add_custom_control(category_node)
 		
-		var event_info 
+		var event_info
+
+
+func parse_property(object: Object, type: int, path: String, hint: int, hint_text: String, usage: int) -> bool:
+	var path_ignore = path+"_ignore"
+	if (path_ignore in object):
+		return true
+	
+	return false
