@@ -17,6 +17,8 @@ var _version_button:BaseButton
 
 var _plugin_data:ConfigFile = ConfigFile.new()
 
+var event_inspector:EditorInspectorPlugin
+
 
 func _init() -> void:
 	name = PLUGIN_NAME.capitalize()
@@ -36,6 +38,9 @@ func _enter_tree() -> void:
 	_dock_button = add_control_to_bottom_panel(_timeline_editor, "TimelineEditor")
 	_dock_button.visible = false
 	_add_version_button()
+	
+	event_inspector = load("res://addons/event_system_plugin/core/event_inspector.gd").new()
+	add_inspector_plugin(event_inspector)
 
 
 func enable_plugin() -> void:
@@ -74,6 +79,7 @@ func _exit_tree() -> void:
 	if is_instance_valid(_timeline_editor):
 		remove_control_from_bottom_panel(_timeline_editor)
 		_timeline_editor.queue_free()
+	remove_inspector_plugin(event_inspector)
 
 
 func _show_welcome() -> void:
