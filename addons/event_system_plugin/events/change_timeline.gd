@@ -47,7 +47,7 @@ func set_start_event_idx(value:int) -> void:
 
 
 func _get(property: String):
-	if property == "skip_ignore":
+	if property == "continue_at_end_ignore":
 		return true
 	if property == "branch_disabled":
 		return true
