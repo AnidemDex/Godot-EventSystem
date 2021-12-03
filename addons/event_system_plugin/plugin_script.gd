@@ -92,16 +92,20 @@ func _show_welcome() -> void:
 
 func _add_version_button() -> void:
 	var _v = {"version":get_plugin_version()}
-	_version_button = ToolButton.new()
-	connect("tree_exiting", _version_button, "free")
+	
+	_version_button = ToolButton.new()	
 	_version_button.text = "ES:[{version}]".format(_v)
 	_version_button.hint_tooltip = "EventSystem version {version}".format(_v)
+	_version_button.connect("pressed", self, "_show_welcome")
+	
+	connect("tree_exiting", _version_button, "free")
+	
 	var _new_color = _version_button.get_color("font_color")
 	_new_color.a = 0.6
 	_version_button.add_color_override("font_color", _new_color)
-	_version_button.size_flags_horizontal = Control.SIZE_SHRINK_END|Control.SIZE_EXPAND
-	_version_button.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_dock_button.get_parent().add_child(_version_button)
+
+	_dock_button.get_parent().get_parent().add_child(_version_button)
+	_dock_button.get_parent().get_parent().move_child(_version_button, 1)
 	
 
 
