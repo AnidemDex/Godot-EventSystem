@@ -68,7 +68,9 @@ func _update_displayed_name() -> void:
 	var _name:String = "[Load a Timeline to create and edit events]"
 	
 	if _edited_resource:
-		_name = _edited_resource.resource_path
+		# In the future I'll take a look at this line and ask:
+		# "why didn't I used .format()?" and I'll reply "I was lazy that time"
+		_name = "%s | [%s]"%[_edited_resource.resource_name,_edited_resource.resource_path]
 	
 	_name_node.text = _name
 
