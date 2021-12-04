@@ -8,6 +8,7 @@ const _TimelineDisplayer = preload("res://addons/event_system_plugin/nodes/edito
 
 export(NodePath) var ResourceNamePath:NodePath
 export(NodePath) var CategoryManagerPath:NodePath
+export(NodePath) var HistoryMenuPath:NodePath
 
 export(NodePath) var EventContainerPath:NodePath
 
@@ -18,15 +19,23 @@ var _registered_events:Resource = load("res://addons/event_system_plugin/resourc
 var _separator_node:Control
 var _last_focused_event_node:Control
 
+var _history_popup_menu:PopupMenu
+var _history:Array = []
+
 onready var _name_node:Label = get_node(ResourceNamePath) as Label
 onready var _category_manager:_CategoryManager = get_node(CategoryManagerPath) as _CategoryManager
 onready var _timeline_displayer:_TimelineDisplayer = get_node(EventContainerPath) as _TimelineDisplayer
+onready var _history_menu:MenuButton = get_node(HistoryMenuPath) as MenuButton
 
 
 func fake_ready() -> void:
 	_timeline_displayer.set_drag_forwarding(self)
 	get_tree().root.connect("gui_focus_changed", self, "_on_global_focus_changed", [], CONNECT_DEFERRED)
 	_registered_events.connect("changed", self, "_on_RegisteredEvents_changed")
+	
+	_history_popup_menu = _history_menu.get_popup()
+	_history_popup_menu.connect("id_pressed", self, "_on_HistoryMenu_id_pressed")
+	_history_menu.icon = get_icon("History", "EditorIcons")
 
 
 func edit_resource(resource) -> void:
@@ -54,6 +63,7 @@ func _update_values() -> void:
 	_update_displayed_name()
 	_generate_event_buttons()
 	_update_timeline_displayer()
+	_update_history()
 
 
 func _connect_resource_signals() -> void:
@@ -74,6 +84,38 @@ func _update_displayed_name() -> void:
 	
 	_name_node.text = _name
 
+
+func _update_history() -> void:
+	if not _edited_resource:
+		return
+	
+	var _path:String = _name_node.text
+	var refs := []
+	
+	for weak_ref in _history:
+		var ref:WeakRef = (weak_ref as WeakRef)
+		
+		if ref == null:
+			continue
+		
+		var res:Resource = ref.get_ref()
+		refs.append(res)
+	
+	if _edited_resource in refs:
+		refs.erase(_edited_resource)
+	
+	refs.append(_edited_resource)
+	
+	_history_popup_menu.clear()
+	for res in refs:
+		_path =  "%s | [%s]"%[res.resource_name,res.resource_path]
+		_history_popup_menu.add_item(_path)
+	
+	_history = []
+	for res in refs:
+		_history.append(weakref(res))
+	refs = []
+	
 
 func _generate_event_buttons() -> void:
 	if not _edited_resource:
@@ -198,6 +240,9 @@ func _on_LoadTimelineButton_pressed() -> void:
 func _on_FilePopup_file_selected(file_path:String) -> void:
 	edit_resource(load(file_path))
 
+
+func _on_HistoryMenu_id_pressed(idx:int) -> void:
+	_PluginScript.get_editor_interface().edit_resource(_history[idx].get_ref())
 
 
 ###########
