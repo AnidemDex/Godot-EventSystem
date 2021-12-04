@@ -41,6 +41,8 @@ func _enter_tree() -> void:
 	
 	event_inspector = load("res://addons/event_system_plugin/core/event_inspector.gd").new()
 	add_inspector_plugin(event_inspector)
+	
+	_add_itself_to_editor_meta()
 
 
 func enable_plugin() -> void:
@@ -75,11 +77,22 @@ func save_external_data() -> void:
 		_timeline_editor.call_deferred("_update_values")
 
 
+func register_event(event:Script) -> void:
+	var events:Array = _registered_events.events.duplicate()
+	if not event in events:
+		events.append(event)
+	_registered_events.set("events", events)
+	var err = ResourceSaver.save(_registered_events.resource_path, _registered_events)
+	if err != OK:
+		push_error("There was an error while trying to register events: %s"%err)
+	_registered_events.emit_changed()
+
 func _exit_tree() -> void:
 	if is_instance_valid(_timeline_editor):
 		remove_control_from_bottom_panel(_timeline_editor)
 		_timeline_editor.queue_free()
 	remove_inspector_plugin(event_inspector)
+	_remove_itself_from_editor_meta()
 
 
 func _show_welcome() -> void:
@@ -106,7 +119,14 @@ func _add_version_button() -> void:
 
 	_dock_button.get_parent().get_parent().add_child(_version_button)
 	_dock_button.get_parent().get_parent().move_child(_version_button, 1)
-	
+
+
+func _add_itself_to_editor_meta() -> void:
+	get_tree().set_meta("EventSystem", self)
+
+
+func _remove_itself_from_editor_meta() -> void:
+	get_tree().remove_meta("EventSystem")
 
 
 func get_plugin_version() -> String:
