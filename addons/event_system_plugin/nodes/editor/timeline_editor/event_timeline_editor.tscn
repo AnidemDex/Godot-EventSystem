@@ -15,6 +15,7 @@ __meta__ = {
 }
 ResourceNamePath = NodePath("VBoxContainer/HBoxContainer/Label")
 CategoryManagerPath = NodePath("VBoxContainer/PanelContainer/VBoxContainer/CategoryManager")
+HistoryMenuPath = NodePath("VBoxContainer/HBoxContainer/HistoryMenu")
 EventContainerPath = NodePath("VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/MarginContainer/VBoxContainer")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
@@ -31,8 +32,15 @@ margin_right = 102.0
 margin_bottom = 20.0
 text = "Load Timeline"
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="HistoryMenu" type="MenuButton" parent="VBoxContainer/HBoxContainer"]
 margin_left = 106.0
+margin_right = 229.0
+margin_bottom = 20.0
+text = "Recent Timelines"
+items = [ "Elemento 0", null, 0, false, false, 0, 0, null, "", false ]
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_left = 233.0
 margin_top = 3.0
 margin_right = 1024.0
 margin_bottom = 17.0
@@ -101,6 +109,7 @@ script = ExtResource( 3 )
 margin_right = 1024.0
 margin_bottom = 210.0
 rect_min_size = Vector2( 150, 52.5 )
+window_title = "Guardar un Archivo"
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/LoadTimelineButton" to="." method="_on_LoadTimelineButton_pressed"]
 [connection signal="event_pressed" from="VBoxContainer/PanelContainer/VBoxContainer/CategoryManager" to="." method="_on_CategoryManager_event_pressed"]
