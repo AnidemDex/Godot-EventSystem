@@ -35,6 +35,7 @@ func fake_ready() -> void:
 	
 	_history_popup_menu = _history_menu.get_popup()
 	_history_popup_menu.connect("id_pressed", self, "_on_HistoryMenu_id_pressed")
+	_history_menu.icon = get_icon("History", "EditorIcons")
 
 
 func edit_resource(resource) -> void:
