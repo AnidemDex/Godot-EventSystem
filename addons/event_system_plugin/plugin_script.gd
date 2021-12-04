@@ -43,6 +43,8 @@ func _enter_tree() -> void:
 	add_inspector_plugin(event_inspector)
 	
 	_add_itself_to_editor_meta()
+	
+	connect("scene_changed", self, "_on_scene_changed")
 
 
 func enable_plugin() -> void:
@@ -151,3 +153,8 @@ func _on_RegisteredEvents_changed() -> void:
 
 func _on_TimelineEditor_preview_edit_pressed(resource) -> void:
 	get_editor_interface().edit_resource(resource)
+
+
+func _on_scene_changed(_scene_root:Node) -> void:
+	if is_instance_valid(_timeline_editor):
+		_timeline_editor._history.clear()
