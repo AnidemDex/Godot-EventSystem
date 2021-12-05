@@ -10,7 +10,6 @@ export(Resource) var events_else = Timeline.new()
 
 
 func _init() -> void:
-	# Uncomment resource_name line if you want to display a name in the editor
 	event_name = "Condition"
 	event_color = Color("#FBB13C")
 	event_icon = load("res://addons/event_system_plugin/assets/icons/event_icons/condition_event.png") as Texture
@@ -18,6 +17,10 @@ func _init() -> void:
 	event_hint = "Similar to if-else statement.\nEvaluates a condition and execute events accordingly."
 	event_category = "Logic"
 	continue_at_end = true
+
+	events_if = _get_empty_timeline("Timeline IF")
+
+	events_else = _get_empty_timeline("Timeline ELSE")
 
 
 func _execute() -> void:
@@ -71,3 +74,25 @@ func set_else_events(value:Timeline) -> void:
 	events_else = value
 	emit_changed()
 	property_list_changed_notify()
+
+
+func property_can_revert(property:String) -> bool:
+	match property:
+		"events_if", "events_else":
+			return true
+	return false
+
+
+func property_get_revert(property:String): # -> Variant() type
+	if property == "events_if":
+		return _get_empty_timeline("Timeline IF")
+	if property == "events_else":
+		return _get_empty_timeline("Timeline ELSE")
+	return null
+
+
+func _get_empty_timeline(with_name:String) -> Timeline:
+	var tmln := Timeline.new()
+	if with_name != "":
+		tmln.resource_name = with_name
+	return tmln
