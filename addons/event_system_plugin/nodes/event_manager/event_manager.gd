@@ -19,7 +19,7 @@ func _ready() -> void:
 		return
 	
 	if start_on_ready:
-		start_timeline()
+		call_deferred("start_timeline")
 
 
 func start_timeline(timeline_resource:Timeline=timeline) -> void:
