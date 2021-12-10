@@ -85,3 +85,7 @@ func _notify_timeline_start() -> void:
 
 func _notify_timeline_end() -> void:
 	emit_signal("timeline_finished", timeline)
+
+
+func _hide_script_from_inspector():
+	return true

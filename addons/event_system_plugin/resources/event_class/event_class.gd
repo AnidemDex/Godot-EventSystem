@@ -88,3 +88,7 @@ func _set_continue(value:bool) -> void:
 
 func _to_string() -> String:
 	return "[{event_name}:{id}]".format({"event_name":event_name, "id":get_instance_id()})
+
+
+func _hide_script_from_inspector():
+	return true
