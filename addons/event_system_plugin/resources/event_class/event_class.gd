@@ -59,9 +59,11 @@ var event_manager:Node
 
 ## Executes the event behaviour.
 func execute(_event_node=null) -> void:
-	emit_signal("event_started", self)
 	event_node = _event_node
-	_execute()
+	
+	emit_signal("event_started", self)
+	
+	call_deferred("_execute")
 
 
 ## Ends the event behaviour.
