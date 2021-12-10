@@ -23,8 +23,11 @@ body:
     attributes:
       multiple: false
       label: Plugin Version
-      options: 
-        - 1.0 (lastest)
+      options:
+        - 1.2.1 (lastest)
+        - 1.2
+        - 1.1
+        - 1.0
     validations:
       required: true
   
