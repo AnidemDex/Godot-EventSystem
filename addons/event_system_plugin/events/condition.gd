@@ -43,8 +43,7 @@ func _execute() -> void:
 	
 	if timeline:
 		var _events:Array = timeline.get_events()
-		for _event in _events:
-			current_timeline._event_queue.push_front(_event)
+		current_timeline._event_queue = _events + current_timeline._event_queue
 	
 	
 	finish()
