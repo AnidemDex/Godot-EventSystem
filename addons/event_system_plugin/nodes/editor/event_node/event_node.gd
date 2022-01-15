@@ -1,4 +1,10 @@
+tool
 extends HBoxContainer
+
+signal subtimeline_requested(resource, node)
+signal subevent_requested(resource, node)
+
+const Utils = preload("res://addons/event_system_plugin/core/utils.gd")
 
 ## Event related to this node
 var event:Event setget set_event
@@ -6,6 +12,10 @@ var event:Event setget set_event
 var name_label:Label
 ## The description of [member event]
 var description_label:Label
+## Subevents nodes
+var subevents := {}
+## Subtimelines timelines
+var subtimelines := {}
 
 func expand() -> void:
 	pass
@@ -13,6 +23,40 @@ func expand() -> void:
 
 func shrink() -> void:
 	pass
+
+
+func request_subtimeline(resource) -> void:
+	if subtimelines.has(resource):
+		# Avoid adding it twice
+		return
+	
+	if resource == null:
+		return
+	
+	emit_signal("subtimeline_requested", resource, self)
+
+
+func request_subevent(event) -> void:
+	if subevents.has(event):
+		# Avoid adding it twice
+		return
+	
+	if event == null:
+		return
+	print(subevents)
+	emit_signal("subevent_requested", event, self)
+
+
+# This does not calls grab_focus(), is called when the node grabs focus
+func focus() -> void:
+	var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
+	outline_stylebox.border_color = get_color("hover", "EventNode")
+
+
+# This does not calls release_focus(), is called when the node loses focus
+func focus_leave() -> void:
+	var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
+	outline_stylebox.border_color = get_color("outline", "EventNode")
 
 
 func add_node(node:Control) -> void:
@@ -60,7 +104,15 @@ func get_right_node() -> PanelContainer:
 
 
 func set_event(_event) -> void:
+	if event and event.is_connected("changed",self,"update_values"):
+		event.disconnect("changed",self,"update_values")
+	
 	event = _event
+	
+	if event != null:
+		if not event.is_connected("changed",self,"update_values"):
+			event.connect("changed",self,"update_values")
+		name = event.event_name
 
 
 func update_colors() -> void:
@@ -100,14 +152,41 @@ func update_event_description() -> void:
 	var text := "{Event Description}"
 	if event:
 		text = event.event_preview_string
+		text = text.format(Utils.get_property_values_from(event))
 	description_label.text = text
 
 
-func _update_values() -> void:
+func update_values() -> void:
 	update_colors()
 	update_event_name()
 	update_event_description()
+	_update_values()
 	update()
+
+
+func _global_focus_changed(control:Control) -> void:
+	if control == self or is_a_parent_of(control):
+		return
+	
+	if control is get_script():
+		__fake_focus_exit()
+
+
+func _update_values() -> void:
+	pass
+
+func _remove_subevents() -> void:
+	for node in subevents.values():
+		if is_instance_valid(node):
+			node.queue_free()
+	subevents.clear()
+
+
+func _remove_subtimelines() -> void:
+	for node in subtimelines.values():
+		if is_instance_valid(node):
+			node.queue_free()
+	subtimelines.clear()
 
 
 func get_drag_data(position: Vector2):
@@ -123,64 +202,14 @@ func get_drag_data(position: Vector2):
 func can_drop_data(position: Vector2, data) -> bool:
 	return data is Event
 
-
 ###
 # Fake methods
 # methods called by notifications to avoid override virtual ones
 ###
 func __fake_ready() -> void:
-	_update_values()
+	get_tree().root.connect("gui_focus_changed", self, "_global_focus_changed", [], CONNECT_DEFERRED)
 
-
-func __fake_draw() -> void:
-	var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
-	draw_style_box(outline_stylebox, Rect2(Vector2.ZERO, rect_size))
-
-
-func __fake_focus_enter() -> void:
-	var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
-	outline_stylebox.border_color = get_color("hover", "EventNode")
-
-
-func __fake_focus_exit() -> void:
-	var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
-	outline_stylebox.border_color = get_color("outline", "EventNode")
-
-
-func __fake_mouse_enter() -> void:
-	for style in [get_stylebox("bg","EventNode"), get_stylebox("bg_right","EventNode")]:
-		style.bg_color = get_color("event", "EventNode")
-
-
-func __fake_mouse_exit() -> void:
-	for style in [get_stylebox("bg", "EventNode"), get_stylebox("bg_right", "EventNode")]:
-		style.bg_color = get_color("default", "EventNode")
-
-
-func _notification(what: int) -> void:
-	match what:
-		NOTIFICATION_POST_ENTER_TREE:
-			__fake_ready()
-		NOTIFICATION_DRAW:
-			__fake_draw()
-		NOTIFICATION_FOCUS_ENTER:
-			__fake_focus_enter()
-		NOTIFICATION_FOCUS_EXIT:
-			__fake_focus_exit()
-		NOTIFICATION_MOUSE_ENTER:
-			__fake_mouse_enter()
-		NOTIFICATION_MOUSE_EXIT:
-			__fake_mouse_exit()
-
-
-func _init() -> void:
-	
-	theme = load("res://addons/event_system_plugin/assets/themes/event_node/event_node.tres") as Theme
-	theme = theme.duplicate(true)
-	rect_clip_content = true
-	focus_mode = Control.FOCUS_ALL
-	mouse_filter = Control.MOUSE_FILTER_STOP
-	
+func _initialize():
 	name_label = Label.new()
 	name_label.name = "EventName"
 	add_node(name_label)
@@ -209,3 +238,52 @@ func _init() -> void:
 		node.show_behind_parent = true
 		node.size_flags_horizontal = SIZE_EXPAND_FILL
 		node.size_flags_vertical = SIZE_EXPAND_FILL
+
+
+func __fake_draw() -> void:
+	var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
+	draw_style_box(outline_stylebox, Rect2(Vector2.ZERO, rect_size))
+
+
+func __fake_focus_enter() -> void:
+	focus()
+
+
+func __fake_focus_exit() -> void:
+	focus_leave()
+
+
+func __fake_mouse_enter() -> void:
+	for style in [get_stylebox("bg","EventNode"), get_stylebox("bg_right","EventNode")]:
+		style.bg_color = get_color("event", "EventNode")
+
+
+func __fake_mouse_exit() -> void:
+	for style in [get_stylebox("bg", "EventNode"), get_stylebox("bg_right", "EventNode")]:
+		style.bg_color = get_color("default", "EventNode")
+
+
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_DRAW:
+			__fake_draw()
+		NOTIFICATION_FOCUS_ENTER:
+			__fake_focus_enter()
+		NOTIFICATION_FOCUS_EXIT:
+			__fake_focus_exit()
+		NOTIFICATION_MOUSE_ENTER:
+			__fake_mouse_enter()
+		NOTIFICATION_MOUSE_EXIT:
+			__fake_mouse_exit()
+		NOTIFICATION_READY:
+			__fake_ready()
+			update_values()
+
+
+func _init() -> void:
+	theme = load("res://addons/event_system_plugin/assets/themes/event_node/event_node.tres") as Theme
+	theme = theme.duplicate(true)
+	rect_clip_content = true
+	focus_mode = Control.FOCUS_ALL
+	mouse_filter = Control.MOUSE_FILTER_PASS
+	_initialize()

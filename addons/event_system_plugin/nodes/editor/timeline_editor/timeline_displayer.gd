@@ -3,7 +3,7 @@ extends VBoxContainer
 
 signal event_node_added(event_node)
 
-const _EventNode = preload("res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd")
+var _EventNode = load("res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd")
 
 var event_node_scene:PackedScene = load("res://addons/event_system_plugin/nodes/editor/event_node/event_node.tscn") as PackedScene
 
@@ -33,9 +33,9 @@ func _load_events() -> void:
 #		print_debug("Took: ", get_meta("end")-get_meta("start"))
 		return
 	
-	var event_node:_EventNode = event.get("custom_event_node") as _EventNode
+	var event_node = event.get("custom_event_node")
 	if not event_node:
-		event_node = event_node_scene.instance() as _EventNode
+		event_node = event_node_scene.instance()
 		
 	event_node.event = event
 	event_node.event_index = _timeline.get_events().find(event)

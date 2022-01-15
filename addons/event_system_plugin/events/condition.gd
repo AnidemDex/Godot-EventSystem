@@ -1,6 +1,5 @@
 tool
 extends Event
-class_name EventCondition
 
 const _Utils = preload("res://addons/event_system_plugin/core/utils.gd")
 
@@ -54,7 +53,7 @@ func _get(property: String):
 		return true
 	
 	if property == "custom_event_node":
-		return load("res://addons/event_system_plugin/nodes/editor/event_node/event_condition/event_node.tscn").instance()
+		return load("res://addons/event_system_plugin/nodes/editor/event_node/event_condition_node.gd").new()
 
 
 func set_condition(value:String) -> void:
