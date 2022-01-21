@@ -19,17 +19,22 @@ func initialize() -> void:
 	_event_queue = get_events()
 
 
+func event_changed() -> void:
+	emit_changed()
+	property_list_changed_notify()
+
+
 func set_events(events:Array) -> void:
 	for item in _events:
 		item = item as Resource
 		if item == null:
 			continue
-		if item.is_connected("changed", self, "emit_changed"):
-			item.disconnect("changed", self, "emit_changed")
+		if item.is_connected("changed", self, "event_changed"):
+			item.disconnect("changed", self, "event_changed")
 	for item in events:
 		item = item as Resource
-		if not item.is_connected("changed", self, "emit_changed"):
-			item.connect("changed", self, "emit_changed")
+		if not item.is_connected("changed", self, "event_changed"):
+			item.connect("changed", self, "event_changed")
 	_events = events.duplicate()
 	emit_changed()
 	property_list_changed_notify()
@@ -40,15 +45,15 @@ func add_event(event, at_position=-1) -> void:
 		_events.insert(at_position, event)
 	else:
 		_events.append(event)
-	if not event.is_connected("changed", self, "emit_changed"):
-		event.connect("changed", self, "emit_changed")
+	if not event.is_connected("changed", self, "event_changed"):
+		event.connect("changed", self, "event_changed")
 	emit_changed()
 
 
 func erase_event(event) -> void:
 	_events.erase(event)
-	if event.is_connected("changed", self, "emit_changed"):
-		event.disconnect("changed", self, "emit_changed")
+	if event.is_connected("changed", self, "event_changed"):
+		event.disconnect("changed", self, "event_changed")
 	emit_changed()
 
 

@@ -5,8 +5,8 @@ class_name EventCondition
 const _Utils = preload("res://addons/event_system_plugin/core/utils.gd")
 
 export(String) var condition:String = "" setget set_condition
-export(Resource) var events_if = Timeline.new()
-export(Resource) var events_else = Timeline.new()
+export(Resource) var events_if = Timeline.new() setget set_if_events
+export(Resource) var events_else = Timeline.new() setget set_else_events
 
 
 func _init() -> void:
@@ -64,13 +64,26 @@ func set_condition(value:String) -> void:
 
 
 func set_if_events(value:Timeline) -> void:
+	if events_if.is_connected("changed", self, "timeline_changed"):
+		events_if.disconnect("changed", self, "timeline_changed")
 	events_if = value
+	if not events_if.is_connected("changed", self, "timeline_changed"):
+		events_if.connect("changed", self, "timeline_changed")
 	emit_changed()
 	property_list_changed_notify()
 
 
 func set_else_events(value:Timeline) -> void:
+	if events_else.is_connected("changed", self, "timeline_changed"):
+		events_else.disconnect("changed", self, "timeline_changed")
 	events_else = value
+	if not events_else.is_connected("changed", self, "timeline_changed"):
+		events_else.connect("changed", self, "timeline_changed")
+	emit_changed()
+	property_list_changed_notify()
+
+
+func timeline_changed() -> void:
 	emit_changed()
 	property_list_changed_notify()
 
