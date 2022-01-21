@@ -37,8 +37,6 @@ func _fake_ready() -> void:
 	
 	get_tree().root.connect("gui_focus_changed", self, "_on_global_focus_changed")
 	
-	_name_container.set_drag_forwarding(self)
-	
 	_update_values()
 
 
@@ -180,13 +178,6 @@ func _draw_line_center() -> void:
 	
 	draw_arc(pivot, 5, 0, 2*PI, 16, Color.black, 1, true)
 	draw_circle(pivot, 2, get_color("event"))
-
-
-func get_drag_data_fw(_position: Vector2, _of_node:Control):
-	var node = self.duplicate(0)
-	node.rect_size = Vector2.ZERO
-	set_drag_preview(node)
-	return event
 
 
 func _notification(what: int) -> void:
