@@ -288,7 +288,7 @@ func _on_drag_end() -> void:
 func get_drag_data_fw(_position: Vector2, of_node:Control):
 	var node = of_node.duplicate(0)
 	node.rect_size = Vector2.ZERO
-	of_node.set_drag_preview(of_node)
+	of_node.set_drag_preview(node)
 	return of_node.event
 
 
@@ -307,7 +307,7 @@ func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
 	var node_rect:Rect2 = node.get_rect()
 	var node_idx:int = int(node.get("event_index"))
 	
-	_separator_node.set("event_index", node_idx)
+#	_separator_node.set("event_index", node_idx)
 	
 	if not _timeline_displayer.is_a_parent_of(_separator_node):
 		if _separator_node.is_inside_tree():
@@ -332,10 +332,4 @@ func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
 
 
 func drop_data_fw(position: Vector2, data, node) -> void:
-	if node == _timeline_displayer and data is Event:
-		_add_event(data)
-		return
-	var _position:int = _separator_node.event_index
-	_add_event(data, _position)
-	_separator_node.queue_free()
-	_drag_data = null
+	pass
