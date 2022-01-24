@@ -213,12 +213,15 @@ func _on_EventNode_timeline_selected(timeline:Timeline) -> void:
 	_timeline_popup.connect("hide", _timeline_popup, "queue_free")
 	_timeline_popup.rect_clip_content = false
 	_timeline_popup.window_title = "Timeline Preview"
+	_timeline_popup.resizable = true
 	var _edit_button = _timeline_popup.add_button("Edit timeline", true, "")
 	_edit_button.connect("pressed", _PluginScript, "_on_TimelineEditor_preview_edit_pressed", [timeline])
 	_edit_button.connect("pressed", _timeline_popup, "hide")
 	var _scroll := ScrollContainer.new()
+	_scroll.size_flags_horizontal = SIZE_EXPAND_FILL
 	_timeline_popup.add_child(_scroll)
 	var _editor_duplicate := _TimelineDisplayer.new()
+	_editor_duplicate.size_flags_horizontal = SIZE_EXPAND_FILL
 	
 	_editor_duplicate.connect("ready", _editor_duplicate, "load_timeline", [timeline])
 	_scroll.add_child(_editor_duplicate)
