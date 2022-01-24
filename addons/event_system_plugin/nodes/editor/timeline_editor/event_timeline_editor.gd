@@ -22,6 +22,8 @@ var _last_focused_event_node:Control
 var _history_popup_menu:PopupMenu
 var _history:Array = []
 
+var _drag_data
+
 onready var _name_node:Label = get_node(ResourceNamePath) as Label
 onready var _category_manager:_CategoryManager = get_node(CategoryManagerPath) as _CategoryManager
 onready var _timeline_displayer:_TimelineDisplayer = get_node(EventContainerPath) as _TimelineDisplayer
@@ -263,15 +265,15 @@ func _notification(what: int) -> void:
 
 
 func _on_drag_begin() -> void:
-	var drag_data = get_tree().root.gui_get_drag_data()
+	_drag_data = get_tree().root.gui_get_drag_data()
 	
-	if not drag_data:
+	if not _drag_data:
 		return
 	
-	if not(drag_data is Event):
+	if not(_drag_data is Event):
 		return
 	
-	_remove_event(drag_data)
+	_remove_event(_drag_data)
 	
 	if not is_instance_valid(_separator_node):
 		_generate_separator_node()
@@ -279,7 +281,18 @@ func _on_drag_begin() -> void:
 
 func _on_drag_end() -> void:
 	if is_instance_valid(_separator_node):
+		if _drag_data:
+			var _position:int = _separator_node.event_index
+			_add_event(_drag_data, _position)
+			_drag_data = null
 		_separator_node.queue_free()
+
+
+func get_drag_data_fw(_position: Vector2, of_node:Control):
+	var node = of_node.duplicate(0)
+	node.rect_size = Vector2.ZERO
+	of_node.set_drag_preview(node)
+	return of_node.event
 
 
 func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
@@ -290,25 +303,26 @@ func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
 		return true
 	
 	if node == _separator_node:
+		if _separator_node:
+			_separator_node.visible = true
 		return true
 	
 	var node_rect:Rect2 = node.get_rect()
 	var node_idx:int = int(node.get("event_index"))
 	
-	_separator_node.set("event_index", node_idx)
-	
-	
-	var _drop_index_hint:int = -1
-	if position.y > node_rect.size.y/2:
-		_drop_index_hint = node_idx+1
-	else:
-		_drop_index_hint = node_idx
+#	_separator_node.set("event_index", node_idx)
 	
 	if not _timeline_displayer.is_a_parent_of(_separator_node):
 		if _separator_node.is_inside_tree():
 			_separator_node.get_parent().remove_child(_separator_node)
 		_timeline_displayer.add_child(_separator_node)
 	
+	var _drop_index_hint:int = -1
+	if position.y > node_rect.size.y/2:
+		_drop_index_hint = node_idx+1
+	else:
+		_drop_index_hint = node_idx
+
 	_separator_node.set("event", data)
 	_separator_node.set("event_index", _drop_index_hint)
 	_separator_node.call("_update_event_colors")
@@ -321,9 +335,4 @@ func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
 
 
 func drop_data_fw(position: Vector2, data, node) -> void:
-	if node == _timeline_displayer and data is Event:
-		_add_event(data)
-		return
-	
-	var _position:int = _separator_node.event_index
-	_add_event(data, _position)
+	pass
