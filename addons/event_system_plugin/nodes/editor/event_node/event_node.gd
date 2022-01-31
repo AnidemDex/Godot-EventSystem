@@ -43,7 +43,7 @@ func request_subevent(event) -> void:
 	
 	if event == null:
 		return
-	print(subevents)
+	
 	emit_signal("subevent_requested", event, self)
 
 
@@ -238,7 +238,11 @@ func _initialize():
 		node.show_behind_parent = true
 		node.size_flags_horizontal = SIZE_EXPAND_FILL
 		node.size_flags_vertical = SIZE_EXPAND_FILL
+	
+	idx = Label.new()
+	add_node(idx)
 
+var idx
 
 func __fake_draw() -> void:
 	var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
