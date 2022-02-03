@@ -41,9 +41,13 @@ func update_view() -> void:
 	
 	
 	if loaded_events.size() > data.size():
+		for node in get_children():
+			node.free()
 		loaded_events.clear()
 	
 	if loaded_nodes.size() > data.size():
+		for node in get_children():
+			node.free()
 		loaded_nodes.clear()
 	
 	
@@ -64,11 +68,6 @@ func update_view() -> void:
 		var event = loaded_nodes[idx].get("event")
 		var real_idx = data.find(event)
 		loaded_nodes[idx].get("idx").set("text", str(real_idx))
-		
-#		if real_idx == -1:
-#			loaded_nodes[idx].queue_free()
-#			continue
-			
 		move_child(loaded_nodes[idx], real_idx)
 	
 	_notify_load_ended()
@@ -108,16 +107,46 @@ func _handle_queued_subevents() -> void:
 		return
 	if is_connected("load_ended", self, "_handle_queued_subevents"):
 		disconnect("load_ended", self, "_handle_queued_subevents")
+	
 	for _data in subevent_queue:
 		_on_EventNode_subevent_requested(_data[0], _data[1])
 	subevent_queue.clear()
 	update_view()
 
+var subtimeline_queue := []
+func _handle_queued_subtimelines() -> void:
+	if loading:
+		return
+	loading = true
+	if is_connected("load_ended", self, "_handle_queued_subtimelines"):
+		disconnect("load_ended", self, "_handle_queued_subtimelines")
+	
+	for data in subtimeline_queue:
+		var node:Node = data[1]
+		var subtimeline:Resource = data[0]
+		var container:HBoxContainer
+		if node.has_meta("subtimeline_container") and is_instance_valid(node.get_meta("subtimeline_container")):
+			container = node.get_meta("subtimeline_container")
+		else:
+			container = HBoxContainer.new()
+			var spacer = Control.new()
+			spacer.rect_min_size = Vector2(8,0)
+			container.add_child(spacer)
+			node.set_meta("subtimeline_container", container)
+			add_child(container)
+		
+		var timeline_displayer:Control = get_script().new()
+		timeline_displayer.rect_min_size = Vector2(0,16)
+		container.add_child(timeline_displayer)
+		timeline_displayer.call("load_timeline", subtimeline)
+	subtimeline_queue.clear()
+	_notify_load_ended()
+
 
 func _on_EventNode_subevent_requested(resource, node) -> void:
 	node.subevents[resource] = null
 	if loading:
-		print("Loading...")
+		print("Loading... event")
 		subevent_queue.append([resource, node])
 		if not is_connected("load_ended", self, "_handle_queued_subevents"):
 			connect("load_ended", self, "_handle_queued_subevents", [], CONNECT_DEFERRED)
@@ -127,7 +156,13 @@ func _on_EventNode_subevent_requested(resource, node) -> void:
 
 
 func _on_EventNode_subtimeline_requested(resource, node) -> void:
-	pass
+	node.subtimelines[resource] = null
+	if loading:
+		print("Loading... subtimeline")
+		subtimeline_queue.append([resource, node])
+		if not is_connected("load_ended", self, "_handle_queued_subtimelines"):
+			connect("load_ended", self, "_handle_queued_subtimelines", [], CONNECT_DEFERRED)
+		return
 
 
 func _init() -> void:
