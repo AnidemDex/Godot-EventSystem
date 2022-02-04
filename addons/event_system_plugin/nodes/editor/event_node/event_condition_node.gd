@@ -37,4 +37,4 @@ func _update_values() -> void:
 	var else_timeline = event.get_else_timeline()
 	if else_timeline:
 		dummy.timeline = else_timeline
-	request_subevent(dummy)
+		request_subevent(dummy)

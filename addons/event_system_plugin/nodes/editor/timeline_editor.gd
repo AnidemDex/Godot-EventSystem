@@ -35,12 +35,12 @@ class EventMenu extends PopupMenu:
 		set_title(event_name)
 
 
-const SequenceDisplayer = preload("res://addons/event_system_plugin/nodes/editor/timeline_displayer.gd")
+const TimelineDisplayer = preload("res://addons/event_system_plugin/nodes/editor/timeline_displayer.gd")
 const EventNode = preload("res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd")
 
 var shortcuts = load("res://addons/event_system_plugin/core/shortcuts.gd")
 
-var seq_displayer:SequenceDisplayer
+var seq_displayer:TimelineDisplayer
 var last_selected_event:Event
 
 var _sc:ScrollContainer
@@ -57,7 +57,7 @@ func set_undo_redo(value:UndoRedo) -> void:
 	__undo_redo = value
 
 
-func edit_sequence(sequence) -> void:
+func edit_timeline(sequence) -> void:
 	_disconnect_edited_sequence_signals()
 	
 	_edited_sequence = sequence
@@ -143,6 +143,7 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 	var duplicate_shortcut = shortcuts.get_shortcut("duplicate")
 	if event.shortcut_match(duplicate_shortcut.shortcut):
 		if _event and event.is_pressed():
+			seq_displayer.remove_all_displayed_events()
 			var position:int = _edited_sequence.get_events().find(_event)
 			add_event(_event.duplicate(), position+1)
 		event_node.accept_event()
@@ -166,6 +167,9 @@ func _on_EventMenu_index_pressed(idx:int) -> void:
 	if _used_event == null:
 		return
 	
+	# I'm not gonna lost my time recycling nodes tbh
+	seq_displayer.remove_all_displayed_events()
+	
 	match idx:
 		EventMenu.ItemType.EDIT:
 			pass
@@ -177,10 +181,12 @@ func _on_EventMenu_index_pressed(idx:int) -> void:
 			remove_event(_used_event)
 
 
-func _ready() -> void:
+func _init() -> void:
+	theme = load("res://addons/event_system_plugin/assets/themes/debug_theme.tres") as Theme
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	_info_label = Label.new()
+	_info_label.name = "Info Label"
 	add_child(_info_label)
 	
 	_sc = ScrollContainer.new()
@@ -188,9 +194,8 @@ func _ready() -> void:
 	_sc.size_flags_horizontal = SIZE_EXPAND_FILL
 	_sc.size_flags_vertical = SIZE_EXPAND_FILL
 	_sc.mouse_filter = Control.MOUSE_FILTER_PASS
-	_sc.add_stylebox_override("bg",get_stylebox("bg", "Tree"))
 	
-	seq_displayer = SequenceDisplayer.new()
+	seq_displayer = TimelineDisplayer.new()
 	seq_displayer.connect("event_node_added", self, "_on_SequenceDisplayer_event_node_added")
 	_sc.add_child(seq_displayer)
 	add_child(_sc)
@@ -202,3 +207,9 @@ func _ready() -> void:
 	
 	connect("tree_exiting", _info_label, "queue_free")
 	connect("tree_exiting", _sc, "queue_free")
+
+
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_ENTER_TREE:
+			_sc.add_stylebox_override("bg",get_stylebox("bg", "Tree"))
