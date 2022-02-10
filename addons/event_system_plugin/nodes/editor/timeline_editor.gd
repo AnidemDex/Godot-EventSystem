@@ -40,7 +40,7 @@ const EventNode = preload("res://addons/event_system_plugin/nodes/editor/event_n
 
 var shortcuts = load("res://addons/event_system_plugin/core/shortcuts.gd")
 
-var seq_displayer:TimelineDisplayer
+var timeline_displayer:TimelineDisplayer
 var last_selected_event:Event
 
 var _sc:ScrollContainer
@@ -61,15 +61,15 @@ func edit_timeline(sequence) -> void:
 	_disconnect_edited_sequence_signals()
 	
 	_edited_sequence = sequence
-	seq_displayer.remove_all_displayed_events()
-	seq_displayer.load_timeline(sequence)
+	timeline_displayer.remove_all_displayed_events()
+	timeline_displayer.load_timeline(sequence)
 	update_info_label()
 	
 	_connect_edited_sequence_signals()
 
 
 func reload() -> void:
-	seq_displayer.call_deferred("load_timeline", _edited_sequence)
+	timeline_displayer.call_deferred("load_timeline", _edited_sequence)
 	update_info_label()
 
 
@@ -143,7 +143,7 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 	var duplicate_shortcut = shortcuts.get_shortcut("duplicate")
 	if event.shortcut_match(duplicate_shortcut.shortcut):
 		if _event and event.is_pressed():
-			seq_displayer.remove_all_displayed_events()
+			timeline_displayer.remove_all_displayed_events()
 			var position:int = _edited_sequence.get_events().find(_event)
 			add_event(_event.duplicate(), position+1)
 		event_node.accept_event()
@@ -151,7 +151,7 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 	var delete_shortcut = shortcuts.get_shortcut("delete")
 	if event.shortcut_match(delete_shortcut.shortcut):
 		if _event:
-			seq_displayer.remove_all_displayed_events()
+			timeline_displayer.remove_all_displayed_events()
 			remove_event(_event)
 		event_node.accept_event()
 
@@ -168,7 +168,7 @@ func _on_EventMenu_index_pressed(idx:int) -> void:
 		return
 	
 	# I'm not gonna lost my time recycling nodes tbh
-	seq_displayer.remove_all_displayed_events()
+	timeline_displayer.remove_all_displayed_events()
 	
 	match idx:
 		EventMenu.ItemType.EDIT:
@@ -195,9 +195,20 @@ func _init() -> void:
 	_sc.size_flags_vertical = SIZE_EXPAND_FILL
 	_sc.mouse_filter = Control.MOUSE_FILTER_PASS
 	
-	seq_displayer = TimelineDisplayer.new()
-	seq_displayer.connect("event_node_added", self, "_on_SequenceDisplayer_event_node_added")
-	_sc.add_child(seq_displayer)
+	var _dummy_panel := PanelContainer.new()
+	_dummy_panel.size_flags_horizontal = SIZE_EXPAND_FILL
+	_dummy_panel.size_flags_vertical = SIZE_EXPAND_FILL
+	_dummy_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_dummy_panel.focus_mode = Control.FOCUS_NONE
+	_sc.add_child(_dummy_panel)
+	
+	var timeline_drawer = load("res://addons/event_system_plugin/nodes/editor/timeline_drawer.gd").new()
+	_dummy_panel.add_child(timeline_drawer)
+	
+	timeline_displayer = TimelineDisplayer.new()
+	timeline_displayer.connect("event_node_added", self, "_on_SequenceDisplayer_event_node_added")
+	_dummy_panel.add_child(timeline_displayer)
+	timeline_drawer.timeline_displayer = timeline_displayer
 	add_child(_sc)
 	
 	_event_menu = EventMenu.new()
