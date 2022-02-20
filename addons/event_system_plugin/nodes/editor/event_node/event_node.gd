@@ -2,6 +2,12 @@ tool
 extends VBoxContainer
 
 const Utils = preload("res://addons/event_system_plugin/core/utils.gd")
+const SubTimelineNode = preload("res://addons/event_system_plugin/nodes/editor/subtimeline.gd")
+
+class DragData:
+	var event:Event
+	var related_timeline:Timeline
+
 
 class EventButton extends HBoxContainer:
 	var event:Event
@@ -111,7 +117,6 @@ class EventButton extends HBoxContainer:
 		update_colors()
 		update_event_name()
 		update_event_description()
-		_update_values()
 		update()
 
 
@@ -122,23 +127,6 @@ class EventButton extends HBoxContainer:
 		if control is get_script():
 			__fake_focus_exit()
 
-
-	func _update_values() -> void:
-		pass
-
-
-	func get_drag_data(position: Vector2):
-		if not event:
-			return null
-		
-		var node = self.duplicate(0)
-		node.rect_size = Vector2.ZERO
-		set_drag_preview(node)
-		return event
-
-
-	func can_drop_data(position: Vector2, data) -> bool:
-		return data is Event
 
 	###
 	# Fake methods
@@ -231,13 +219,17 @@ class EventButton extends HBoxContainer:
 		name = "EventButton"
 		_initialize()
 
-
-const SubTimelineNode = preload("res://addons/event_system_plugin/nodes/editor/subtimeline.gd")
+signal subevent_added(event_node)
+signal subtimeline_added(timelinedisplayer_node)
 
 var event_button:EventButton
 var subtimeline_container:SubTimelineNode
+
 ## Event related to this node
 var event:Event setget set_event
+
+## Timeline that contains this event. Used as editor hint
+var timeline:Timeline
 
 ## Subevents nodes
 var subevents := {}
@@ -271,11 +263,13 @@ func set_event(_event) -> void:
 
 func add_subtimeline(subtimeline) -> void:
 	if subtimelines.has(subtimeline):
+		emit_signal("subtimeline_added", subtimelines[subtimeline])
 		return
 	
 	var node = subtimeline_container.add_timeline_and_get_node(subtimeline)
 	subtimelines[subtimeline] = node
 	subtimeline_container.show()
+	emit_signal("subtimeline_added", node)
 
 
 func add_subevent(event) -> void:
@@ -292,7 +286,28 @@ func add_subevent(event) -> void:
 	subevents[event] = event_node
 	
 	event_node.set("event", event)
-	add_child(subevents[event])
+	add_child(event_node)
+	emit_signal("subevent_added", event_node)
+
+
+func get_drag_data_fw(position: Vector2, node:Control):
+	if not event:
+		return null
+	
+	var _node = node.duplicate(0)
+	_node.rect_size = Vector2.ZERO
+	set_drag_preview(_node)
+	var data := DragData.new()
+	data.event = event
+	data.related_timeline = timeline
+	return data
+
+
+func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
+	var event_data
+	if typeof(data) in [TYPE_OBJECT, TYPE_DICTIONARY]:
+		event_data = data.get("event")
+	return event_data is Event
 
 
 func _ready():
@@ -301,6 +316,7 @@ func _ready():
 
 func _init():
 	event_button = EventButton.new()
+	event_button.set_drag_forwarding(self)
 	add_child(event_button)
 	
 	subtimeline_container = SubTimelineNode.new()

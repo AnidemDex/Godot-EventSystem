@@ -39,15 +39,12 @@ func _displayer_draw() -> void:
 		if node:
 			end = node.rect_position
 		
-		timeline_displayer.draw_line(start, end, Color.pink)
-		
-		if node:
-			start = node.rect_position
-		if next_node:
-			end = next_node.rect_position
-		
-		timeline_displayer.draw_line(start, end, Color.chocolate)
+		timeline_displayer.draw_line(start, end, Color.pink, 4)
 
 
 func _load_ended() -> void:
 	pass
+
+func _init():
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	focus_mode = Control.FOCUS_NONE

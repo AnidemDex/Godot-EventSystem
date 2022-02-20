@@ -2,28 +2,23 @@ tool
 extends VBoxContainer
 
 signal event_node_added(event_node)
-signal subtimeline_node_added(event_node)
 signal load_started
 signal load_ended
 
 const EventNode = preload("res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd")
+const DEFAULT_MIN_SIZE = Vector2(128, 32)
 
 var data := []
 var loading := false
 
-var subtimeline_queue := []
-var subevent_queue := []
-
-var loaded_nodes := []
-var loaded_events := []
-
-var _last_loaded_node:Node
-var _loading_subevents := false
-var _subevents_data := {}
+# Hint for editor
+var last_used_timeline:Resource = null
 
 
 func load_timeline(timeline) -> void:
+	remove_all_displayed_events()
 	data = timeline.get_events()
+	last_used_timeline = timeline
 	update_view()
 
 
@@ -33,10 +28,13 @@ func is_loading() -> bool:
 
 func update_view() -> void:
 	_notify_load_started()
+	
 	for event in data:
 		var event_node = _get_event_node(event)
-		add_child(event_node)
+		event_node.set("timeline",last_used_timeline)
 		emit_signal("event_node_added", event_node)
+		add_child(event_node)
+	
 	_notify_load_ended()
 
 
@@ -70,7 +68,7 @@ func _notify_load_ended() -> void:
 
 
 func _init() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_PASS
 	size_flags_horizontal = SIZE_EXPAND_FILL
 	size_flags_vertical = SIZE_EXPAND_FILL
-	rect_min_size = Vector2(128, 32)
+	rect_min_size = DEFAULT_MIN_SIZE

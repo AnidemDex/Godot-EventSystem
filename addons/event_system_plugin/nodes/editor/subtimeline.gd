@@ -76,7 +76,7 @@ func add_timeline_and_get_node(timeline:Resource) -> Control:
 	if unfolded_container.get_child_count() > 1:
 		unfolded_container.tabs_visible = true
 	
-	timeline_displayer.call("load_timeline", timeline)
+	timeline_displayer.call_deferred("load_timeline", timeline)
 	return timeline_displayer
 
 
@@ -105,6 +105,7 @@ func _init() -> void:
 	unfolded_container = TabContainer.new()
 	title_bar = TitleBar.new()
 	body = VBoxContainer.new()
+	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	body.add_child(title_bar)
 	body.add_child(unfolded_container)
 	add_child(body)

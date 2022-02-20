@@ -75,7 +75,7 @@ func reload() -> void:
 
 func update_info_label() -> void:
 	var text := "Path: {0}|{1}"
-	var args = ["[No resource]", "Open a sequence to start editing"]
+	var args = ["[No resource]", "Open a timeline to start editing"]
 	
 	if _edited_sequence:
 		args[0] = _edited_sequence.resource_path
@@ -83,24 +83,25 @@ func update_info_label() -> void:
 	
 	_info_label.text = text.format(args)
 
-func remove_event(event:Event) -> void:
+
+func remove_event(event:Event, from_resource:Resource=_edited_sequence) -> void:
 	var _UndoRedo:UndoRedo = _get_undo_redo()
 	
-	var event_idx:int = _edited_sequence.get_events().find(event)
+	var event_idx:int = from_resource.get_events().find(event)
 	_UndoRedo.create_action("Remove event from timeline")
-	_UndoRedo.add_do_method(_edited_sequence, "erase_event", event)
-	_UndoRedo.add_undo_method(_edited_sequence, "add_event", event, event_idx)
+	_UndoRedo.add_do_method(from_resource, "erase_event", event)
+	_UndoRedo.add_undo_method(from_resource, "add_event", event, event_idx)
 	_UndoRedo.commit_action()
 
 
-func add_event(event:Event, at_position:int=-1) -> void:
-	if not _edited_sequence:
+func add_event(event:Event, at_position:int=-1, from_resource:Resource=_edited_sequence) -> void:
+	if not from_resource:
 		return
 	
 	var _UndoRedo:UndoRedo = _get_undo_redo()
 	_UndoRedo.create_action("Add event %s"%event.event_name)
-	_UndoRedo.add_do_method(_edited_sequence, "add_event", event, at_position)
-	_UndoRedo.add_undo_method(_edited_sequence, "erase_event", event)
+	_UndoRedo.add_do_method(from_resource, "add_event", event, at_position)
+	_UndoRedo.add_undo_method(from_resource, "erase_event", event)
 	_UndoRedo.commit_action()
 
 
@@ -123,7 +124,43 @@ func _connect_edited_sequence_signals() -> void:
 			_edited_sequence.connect("changed",self,"reload")
 
 
+func _drag_begin() -> void:
+	var drag_data = get_tree().root.gui_get_drag_data()
+	
+	if not drag_data:
+		return
+	
+	var event_data
+	var timeline_data
+	if typeof(drag_data) in [TYPE_OBJECT, TYPE_DICTIONARY]:
+		event_data = drag_data.get("event")
+		timeline_data = drag_data.get("related_timeline")
+	
+	if not(event_data is Event):
+		return
+	
+	if timeline_data == null:
+		timeline_data = _edited_sequence
+	
+	remove_event(event_data, timeline_data)
 
+
+func _drag_end() -> void:
+	pass
+
+
+func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
+	var event_data
+	
+	if typeof(data) in [TYPE_OBJECT, TYPE_DICTIONARY]:
+		event_data = data.get("event")
+	
+	return node is TimelineDisplayer and event_data is Event
+
+
+func drop_data_fw(position: Vector2, data, node) -> void:
+	var event_data = data.get("event")
+	add_event(event_data, -1, node.last_used_timeline)
 
 
 func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
@@ -145,20 +182,30 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 		if _event and event.is_pressed():
 			timeline_displayer.remove_all_displayed_events()
 			var position:int = _edited_sequence.get_events().find(_event)
-			add_event(_event.duplicate(), position+1)
+			add_event(_event.duplicate(), position+1, event_node.timeline)
 		event_node.accept_event()
 	
 	var delete_shortcut = shortcuts.get_shortcut("delete")
 	if event.shortcut_match(delete_shortcut.shortcut):
 		if _event:
 			timeline_displayer.remove_all_displayed_events()
-			remove_event(_event)
+			remove_event(_event, event_node.timeline)
 		event_node.accept_event()
 
 
-func _on_SequenceDisplayer_event_node_added(event_node:Control) -> void:
+func _on_EventNode_subtimeline_added(subtimeline_displayer:Control, event_node:Control) -> void:
+	if not subtimeline_displayer.is_connected("event_node_added", self, "_on_TimelineDisplayer_event_node_added"):
+		subtimeline_displayer.connect("event_node_added", self, "_on_TimelineDisplayer_event_node_added")
+	
+	subtimeline_displayer.set_drag_forwarding(self)
+
+
+func _on_TimelineDisplayer_event_node_added(event_node:Control) -> void:
 	if not event_node.is_connected("gui_input", self, "_on_EventNode_gui_input"):
 		event_node.connect("gui_input", self, "_on_EventNode_gui_input", [event_node])
+	
+	if not event_node.is_connected("subtimeline_added", self, "_on_EventNode_subtimeline_added"):
+		event_node.connect("subtimeline_added", self, "_on_EventNode_subtimeline_added", [event_node])
 
 
 func _on_EventMenu_index_pressed(idx:int) -> void:
@@ -172,7 +219,8 @@ func _on_EventMenu_index_pressed(idx:int) -> void:
 	
 	match idx:
 		EventMenu.ItemType.EDIT:
-			pass
+			_edited_sequence.emit_changed()
+		
 		EventMenu.ItemType.DUPLICATE:
 			var position:int = _edited_sequence.get_events().find(_used_event)
 			add_event(_used_event.duplicate(), position+1)
@@ -206,9 +254,10 @@ func _init() -> void:
 	_dummy_panel.add_child(timeline_drawer)
 	
 	timeline_displayer = TimelineDisplayer.new()
-	timeline_displayer.connect("event_node_added", self, "_on_SequenceDisplayer_event_node_added")
+	timeline_displayer.connect("event_node_added", self, "_on_TimelineDisplayer_event_node_added")
 	_dummy_panel.add_child(timeline_displayer)
 	timeline_drawer.timeline_displayer = timeline_displayer
+	timeline_displayer.set_drag_forwarding(self)
 	add_child(_sc)
 	
 	_event_menu = EventMenu.new()
@@ -224,3 +273,7 @@ func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_ENTER_TREE:
 			_sc.add_stylebox_override("bg",get_stylebox("bg", "Tree"))
+		NOTIFICATION_DRAG_BEGIN:
+			_drag_begin()
+		NOTIFICATION_DRAG_END:
+			_drag_end()
