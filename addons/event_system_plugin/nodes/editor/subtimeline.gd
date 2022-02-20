@@ -97,11 +97,8 @@ func _enter_tree() -> void:
 	body.add_constant_override("separation", 0)
 
 
-func _get_minimum_size() -> Vector2:
-	return Vector2(32, 32)
-
-
 func _init() -> void:
+	name = "SubtimelineContainer"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	focus_mode = Control.FOCUS_NONE
 	
