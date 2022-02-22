@@ -92,10 +92,6 @@ func  _set_subtimeline_visible(_visible:bool) -> void:
 
 
 func _enter_tree() -> void:
-	var stylebox:StyleBox = get_stylebox("panel")
-	stylebox = stylebox.duplicate()
-	stylebox.content_margin_left = get_constant("identation")
-	add_stylebox_override("panel", stylebox)
 	body.add_constant_override("separation", 0)
 
 
