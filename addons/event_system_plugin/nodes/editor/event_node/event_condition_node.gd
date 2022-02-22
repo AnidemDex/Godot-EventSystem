@@ -3,10 +3,10 @@ extends "res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd"
 
 class ElseEvent extends Event:
 	
-	class ElseNode extends "res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd":
-		func _ready() -> void:
-			mouse_filter = Control.MOUSE_FILTER_IGNORE
-			focus_mode = Control.FOCUS_NONE
+	class ElseNode extends "res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd":		
+		func _ready():
+			event_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			event_button.focus_mode = Control.FOCUS_NONE
 		
 		
 		func _update_values() -> void:

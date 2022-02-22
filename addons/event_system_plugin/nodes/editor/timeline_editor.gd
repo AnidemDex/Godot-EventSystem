@@ -84,7 +84,10 @@ func update_info_label() -> void:
 	_info_label.text = text.format(args)
 
 
-func remove_event(event:Event, from_resource:Resource=_edited_sequence) -> void:
+func remove_event(event:Event, from_resource:Resource) -> void:
+	if event == null or from_resource == null:
+		return
+	
 	var _UndoRedo:UndoRedo = _get_undo_redo()
 	
 	var event_idx:int = from_resource.get_events().find(event)
@@ -104,6 +107,82 @@ func add_event(event:Event, at_position:int=-1, from_resource:Resource=_edited_s
 	_UndoRedo.add_undo_method(from_resource, "erase_event", event)
 	_UndoRedo.commit_action()
 
+func get_drag_data_fw(position, node):
+	if node is EventNode:
+		var event = node.get("event")
+		var timeline = node.get("timeline")
+		remove_event(event, timeline)
+		if not event:
+			return null
+			
+		var _node = node.event_button.duplicate(0)
+		
+		_node.rect_size = Vector2.ZERO
+		set_drag_preview(_node)
+		var data = EventNode.DragData.new()
+		data.event = event
+		return data
+
+
+var _separator_node:EventNode.EventButton
+var _idx_hint:int = -1
+var _last_node:Node
+func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
+	var event_data
+	
+	if typeof(data) in [TYPE_OBJECT, TYPE_DICTIONARY]:
+		event_data = data.get("event")
+	else:
+		return false
+	
+	if is_instance_valid(_separator_node):
+		if _separator_node.is_inside_tree():
+			var separator_parent:Node = _separator_node.get_parent()
+			
+			if node is TimelineDisplayer and node != separator_parent:
+				separator_parent.remove_child(_separator_node)
+				node.add_child(_separator_node)
+		else:
+			if node is TimelineDisplayer:
+				node.add_child(_separator_node)
+		
+		if node is EventNode and node != _separator_node:
+			var node_rect:Rect2 = node.event_button.get_rect()
+			if position.y > node_rect.size.y/2:
+				_idx_hint = node.idx+1
+			else:
+				_idx_hint = node.idx
+		
+		if node is TimelineDisplayer:
+			if _last_node == node:
+				_idx_hint = node.get_child_count()-1
+			_idx_hint = clamp(_idx_hint, 0, node.get_child_count())
+			node.move_child(_separator_node, _idx_hint)
+		
+		_separator_node.set("event", event_data)
+		_separator_node.update_values()
+	else:
+		_generate_separator_node()
+	
+	_last_node = node
+	return node is TimelineDisplayer and event_data is Event
+
+
+func drop_data_fw(position: Vector2, data, node) -> void:
+	var event_data = data.get("event")
+	add_event(event_data, _idx_hint, node.last_used_timeline)
+	_idx_hint = -1
+
+
+func _generate_separator_node() -> void:
+	_separator_node = EventNode.EventButton.new()
+	_separator_node.propagate_call("set", ["focus_mode", Control.FOCUS_NONE])
+	_separator_node.propagate_call("set", ["mouse_filter", Control.MOUSE_FILTER_PASS])
+	_separator_node.modulate.a = 0.5
+	_separator_node.modulate = _separator_node.modulate.darkened(0.2)
+	connect("tree_exited", _separator_node, "free")
+	_separator_node.set_drag_forwarding(self)
+
 
 func _get_undo_redo() -> UndoRedo:
 	if not is_instance_valid(__undo_redo):
@@ -122,45 +201,6 @@ func _connect_edited_sequence_signals() -> void:
 	if _edited_sequence:
 		if not _edited_sequence.is_connected("changed",self,"reload"):
 			_edited_sequence.connect("changed",self,"reload")
-
-
-func _drag_begin() -> void:
-	var drag_data = get_tree().root.gui_get_drag_data()
-	
-	if not drag_data:
-		return
-	
-	var event_data
-	var timeline_data
-	if typeof(drag_data) in [TYPE_OBJECT, TYPE_DICTIONARY]:
-		event_data = drag_data.get("event")
-		timeline_data = drag_data.get("related_timeline")
-	
-	if not(event_data is Event):
-		return
-	
-	if timeline_data == null:
-		timeline_data = _edited_sequence
-	
-	remove_event(event_data, timeline_data)
-
-
-func _drag_end() -> void:
-	pass
-
-
-func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
-	var event_data
-	
-	if typeof(data) in [TYPE_OBJECT, TYPE_DICTIONARY]:
-		event_data = data.get("event")
-	
-	return node is TimelineDisplayer and event_data is Event
-
-
-func drop_data_fw(position: Vector2, data, node) -> void:
-	var event_data = data.get("event")
-	add_event(event_data, -1, node.last_used_timeline)
 
 
 func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
@@ -196,8 +236,13 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 func _on_EventNode_subtimeline_added(subtimeline_displayer:Control, event_node:Control) -> void:
 	if not subtimeline_displayer.is_connected("event_node_added", self, "_on_TimelineDisplayer_event_node_added"):
 		subtimeline_displayer.connect("event_node_added", self, "_on_TimelineDisplayer_event_node_added")
-	
+		
 	subtimeline_displayer.set_drag_forwarding(self)
+
+
+func _on_EventNode_subevent_added(event_node:Control) -> void:
+	if not event_node.is_connected("subtimeline_added", self, "_on_EventNode_subtimeline_added"):
+		event_node.connect("subtimeline_added", self, "_on_EventNode_subtimeline_added", [event_node])
 
 
 func _on_TimelineDisplayer_event_node_added(event_node:Control) -> void:
@@ -206,6 +251,11 @@ func _on_TimelineDisplayer_event_node_added(event_node:Control) -> void:
 	
 	if not event_node.is_connected("subtimeline_added", self, "_on_EventNode_subtimeline_added"):
 		event_node.connect("subtimeline_added", self, "_on_EventNode_subtimeline_added", [event_node])
+	
+	if not event_node.is_connected("subevent_added", self, "_on_EventNode_subevent_added"):
+		event_node.connect("subevent_added", self, "_on_EventNode_subevent_added")
+	
+	event_node.set_drag_forwarding(self)
 
 
 func _on_EventMenu_index_pressed(idx:int) -> void:
@@ -226,7 +276,7 @@ func _on_EventMenu_index_pressed(idx:int) -> void:
 			add_event(_used_event.duplicate(), position+1)
 			
 		EventMenu.ItemType.REMOVE:
-			remove_event(_used_event)
+			remove_event(_used_event, _edited_sequence)
 
 
 func _init() -> void:
@@ -273,7 +323,6 @@ func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_ENTER_TREE:
 			_sc.add_stylebox_override("bg",get_stylebox("bg", "Tree"))
-		NOTIFICATION_DRAG_BEGIN:
-			_drag_begin()
 		NOTIFICATION_DRAG_END:
-			_drag_end()
+			if is_instance_valid(_separator_node):
+				_separator_node.queue_free()

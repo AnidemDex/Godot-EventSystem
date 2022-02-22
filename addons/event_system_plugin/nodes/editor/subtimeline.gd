@@ -77,6 +77,7 @@ func add_timeline_and_get_node(timeline:Resource) -> Control:
 		unfolded_container.tabs_visible = true
 	
 	timeline_displayer.call_deferred("load_timeline", timeline)
+	timeline.connect("changed", timeline_displayer, "reload")
 	return timeline_displayer
 
 
@@ -113,4 +114,3 @@ func _init() -> void:
 	unfolded_container.tabs_visible = false
 	
 	title_bar.connect("toggled", self, "_set_subtimeline_visible")
-	connect("tree_exiting", body, "queue_free")

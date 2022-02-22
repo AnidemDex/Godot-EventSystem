@@ -29,11 +29,14 @@ func is_loading() -> bool:
 func update_view() -> void:
 	_notify_load_started()
 	
-	for event in data:
+	for event_idx in data.size():
+		var event = data[event_idx]
 		var event_node = _get_event_node(event)
 		event_node.set("timeline",last_used_timeline)
+		event_node.set("idx", event_idx)
 		emit_signal("event_node_added", event_node)
 		add_child(event_node)
+		event_node.call_deferred("update_values")
 	
 	_notify_load_ended()
 
@@ -41,6 +44,10 @@ func update_view() -> void:
 func remove_all_displayed_events() -> void:
 	for child in get_children():
 		child.queue_free()
+
+
+func reload() -> void:
+	load_timeline(last_used_timeline)
 
 
 func _get_event_node(event:Event) -> EventNode:

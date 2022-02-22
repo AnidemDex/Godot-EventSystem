@@ -15,6 +15,7 @@ class EventButton extends HBoxContainer:
 	var name_label:Label
 	## The description of [member event]
 	var description_label:Label
+	var idx_label:Label
 
 	# This does not calls grab_focus(), is called when the node grabs focus
 	func focus() -> void:
@@ -145,9 +146,6 @@ class EventButton extends HBoxContainer:
 		description_label.name = "EventDescription"
 		add_node(description_label)
 		
-		connect("tree_exiting", name_label, "queue_free")
-		connect("tree_exiting", description_label, "queue_free")
-		
 		for node in [name_label, description_label]:
 			node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			node.focus_mode = Control.FOCUS_NONE
@@ -166,10 +164,10 @@ class EventButton extends HBoxContainer:
 			node.size_flags_horizontal = SIZE_EXPAND_FILL
 			node.size_flags_vertical = SIZE_EXPAND_FILL
 		
-		idx = Label.new()
-		add_node(idx)
+		idx_label = Label.new()
+		add_node(idx_label)
+		idx_label.hide()
 
-	var idx
 
 	func __fake_draw() -> void:
 		var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
@@ -219,6 +217,7 @@ class EventButton extends HBoxContainer:
 		name = "EventButton"
 		_initialize()
 
+
 signal subevent_added(event_node)
 signal subtimeline_added(timelinedisplayer_node)
 
@@ -230,6 +229,7 @@ var event:Event setget set_event
 
 ## Timeline that contains this event. Used as editor hint
 var timeline:Timeline
+var idx:int setget set_idx
 
 ## Subevents nodes
 var subevents := {}
@@ -257,8 +257,11 @@ func set_event(_event) -> void:
 		name = event.event_name
 		if is_instance_valid(event_button):
 			event_button.set("event", event)
-	
-	update_values()
+
+
+func set_idx(value:int) -> void:
+	idx = value
+	event_button.idx_label.text = str(idx)
 
 
 func add_subtimeline(subtimeline) -> void:
@@ -274,6 +277,7 @@ func add_subtimeline(subtimeline) -> void:
 
 func add_subevent(event) -> void:
 	if subevents.has(event):
+		emit_signal("subevent_added", subevents[event])
 		return
 	
 	var event_node:Control = null
@@ -286,32 +290,9 @@ func add_subevent(event) -> void:
 	subevents[event] = event_node
 	
 	event_node.set("event", event)
-	add_child(event_node)
 	emit_signal("subevent_added", event_node)
-
-
-func get_drag_data_fw(position: Vector2, node:Control):
-	if not event:
-		return null
-	
-	var _node = node.duplicate(0)
-	_node.rect_size = Vector2.ZERO
-	set_drag_preview(_node)
-	var data := DragData.new()
-	data.event = event
-	data.related_timeline = timeline
-	return data
-
-
-func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
-	var event_data
-	if typeof(data) in [TYPE_OBJECT, TYPE_DICTIONARY]:
-		event_data = data.get("event")
-	return event_data is Event
-
-
-func _ready():
-	update_values()
+	add_child(event_node)
+	event_node.call_deferred("update_values")
 
 
 func _init():
