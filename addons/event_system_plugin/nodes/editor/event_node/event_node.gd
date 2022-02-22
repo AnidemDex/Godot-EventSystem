@@ -302,3 +302,6 @@ func _init():
 	
 	subtimeline_container = SubTimelineNode.new()
 	add_child(subtimeline_container)
+	
+	subtimelines = {}
+	subevents = {}

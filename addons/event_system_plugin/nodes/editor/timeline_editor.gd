@@ -170,6 +170,7 @@ func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
 
 func drop_data_fw(position: Vector2, data, node) -> void:
 	var event_data = data.get("event")
+	_idx_hint = _separator_node.get_index()
 	add_event(event_data, _idx_hint, node.last_used_timeline)
 	_idx_hint = -1
 
@@ -236,7 +237,16 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 func _on_EventNode_subtimeline_added(subtimeline_displayer:Control, event_node:Control) -> void:
 	if not subtimeline_displayer.is_connected("event_node_added", self, "_on_TimelineDisplayer_event_node_added"):
 		subtimeline_displayer.connect("event_node_added", self, "_on_TimelineDisplayer_event_node_added")
-		
+	
+	if subtimeline_displayer.last_used_timeline == _edited_sequence:
+		subtimeline_displayer.free()
+		(event_node.subtimelines as Dictionary).erase(_edited_sequence)
+		var new_timeline = Timeline.new()
+		var goto = EventComment.new()
+		goto.text = "This subtimeline is the same as the main timeline, that's why it was replaced by this event"
+		new_timeline.add_event(goto)
+		event_node.call_deferred("add_subtimeline",new_timeline)
+		return
 	subtimeline_displayer.set_drag_forwarding(self)
 
 

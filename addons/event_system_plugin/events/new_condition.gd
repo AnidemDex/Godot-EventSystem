@@ -17,23 +17,23 @@ func set_if_timeline(timeline:Resource) -> void:
 	
 	var path := ""
 	if _events_if:
-		if not _events_if.is_connected("changed", self, "set_if_timeline"):
-			_events_if.connect("changed", self, "set_if_timeline", [_events_if])
+#		if not _events_if.is_connected("changed", self, "set_if_timeline"):
+#			_events_if.connect("changed", self, "set_if_timeline", [_events_if])
 		path = _events_if.resource_path
 	
 	_set_if_timeline(path)
 
 
 func set_else_timeline(timeline:Resource) -> void:
-	if _events_else and _events_else.is_connected("changed", self, "set_if_timeline"):
-		_events_else.disconnect("changed", self, "set_if_timeline")
+	if _events_else and _events_else.is_connected("changed", self, "set_else_timeline"):
+		_events_else.disconnect("changed", self, "set_else_timeline")
 	
 	_events_else = timeline
 	
 	var path := ""
 	if _events_else:
-		if not _events_else.is_connected("changed", self, "set_else_timeline"):
-			_events_else.connect("changed", self, "set_if_timeline", [_events_else])
+#		if not _events_else.is_connected("changed", self, "set_else_timeline"):
+#			_events_else.connect("changed", self, "set_else_timeline", [_events_else])
 		path = _events_else.resource_path
 	
 	_set_else_timeline(path)

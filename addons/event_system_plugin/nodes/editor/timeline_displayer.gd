@@ -47,6 +47,7 @@ func remove_all_displayed_events() -> void:
 
 
 func reload() -> void:
+	remove_all_displayed_events()
 	load_timeline(last_used_timeline)
 
 

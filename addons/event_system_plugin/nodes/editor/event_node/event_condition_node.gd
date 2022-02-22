@@ -37,3 +37,5 @@ func _update_values() -> void:
 	if else_timeline:
 		dummy.timeline = else_timeline
 		add_subevent(dummy)
+	
+#	assert(if_timeline != else_timeline, "For some reason, both timelines are the same. Ignore this error if is intended")

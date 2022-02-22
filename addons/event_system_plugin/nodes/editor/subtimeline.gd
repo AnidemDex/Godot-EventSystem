@@ -63,7 +63,7 @@ class TitleBar extends PanelContainer:
 var unfolded_container:TabContainer
 var body:VBoxContainer
 var title_bar:TitleBar
-var preview:Timeline
+var preview:Resource
 
 func add_timeline_and_get_node(timeline:Resource) -> Control:
 	var TimelineDisplayer = load("res://addons/event_system_plugin/nodes/editor/timeline_displayer.gd")
@@ -76,6 +76,7 @@ func add_timeline_and_get_node(timeline:Resource) -> Control:
 	if unfolded_container.get_child_count() > 1:
 		unfolded_container.tabs_visible = true
 	
+	timeline_displayer.set("last_used_timeline", timeline)
 	timeline_displayer.call_deferred("load_timeline", timeline)
 	timeline.connect("changed", timeline_displayer, "reload")
 	return timeline_displayer
