@@ -1,6 +1,5 @@
 tool
 extends Event
-class_name EventCondition
 
 const _Utils = preload("res://addons/event_system_plugin/core/utils.gd")
 
@@ -21,40 +20,13 @@ func _init() -> void:
 	events_if = _get_empty_timeline("Timeline IF")
 
 	events_else = _get_empty_timeline("Timeline ELSE")
+	push_warning("Event condition is deprecated and was replaced by a new one. Will be removed in new versions.")
 
-
-func _execute() -> void:
-	# TODO: replace with node variables
-	var variables:Dictionary = {}
-	
-	var evaluated_condition = _Utils.evaluate(condition, event_node, variables)
-	
-	var timeline:Timeline
-	var current_timeline:Timeline = event_manager.timeline
-		
-	if not current_timeline:
-		finish()
-		return
-	
-	if evaluated_condition and (str(evaluated_condition) != condition):
-		timeline = events_if
-	else:
-		timeline = events_else
-	
-	if timeline:
-		var _events:Array = timeline.get_events()
-		current_timeline._event_queue = _events + current_timeline._event_queue
-	
-	
-	finish()
 
 
 func _get(property: String):
 	if property == "continue_at_end_ignore":
 		return true
-	
-	if property == "custom_event_node":
-		return load("res://addons/event_system_plugin/nodes/editor/event_node/event_condition/event_node.tscn").instance()
 
 
 func set_condition(value:String) -> void:
