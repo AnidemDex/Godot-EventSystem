@@ -1,3 +1,4 @@
+tool
 extends VBoxContainer
 
 class EventMenu extends PopupMenu:
@@ -38,6 +39,8 @@ class EventMenu extends PopupMenu:
 const TimelineDisplayer = preload("res://addons/event_system_plugin/nodes/editor/timeline_displayer.gd")
 const EventNode = preload("res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd")
 const CategoryManager = preload("res://addons/event_system_plugin/nodes/editor/category_manager.gd")
+
+signal event_selected(event)
 
 var shortcuts = load("res://addons/event_system_plugin/core/shortcuts.gd")
 
@@ -213,12 +216,13 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 		if event.button_index == BUTTON_RIGHT and event.pressed:
 			if _event:
 				_event_menu.used_event = _event
-				_event_menu.popup(Rect2(get_local_mouse_position()+Vector2(1,1), _event_menu.rect_size))
+				_event_menu.popup(Rect2(get_global_mouse_position()+Vector2(1,1), _event_menu.rect_size))
 			event_node.accept_event()
 		
 		if (event.button_index in [BUTTON_LEFT,BUTTON_RIGHT]) and event.pressed:
 			if _event:
 				last_selected_event_node = event_node
+				emit_signal("event_selected", _event)
 	
 	var duplicate_shortcut = shortcuts.get_shortcut("duplicate")
 	if event.shortcut_match(duplicate_shortcut.shortcut):
@@ -281,6 +285,7 @@ func _on_EventMenu_index_pressed(idx:int) -> void:
 	
 	match idx:
 		EventMenu.ItemType.EDIT:
+			emit_signal("event_selected", _used_event)
 			_edited_sequence.emit_changed()
 		
 		EventMenu.ItemType.DUPLICATE:
@@ -305,7 +310,7 @@ func _on_CategoryManager_button_pressed(button:Button, event_script:Script) -> v
 
 func _init() -> void:
 	add_constant_override("separation", 2)
-	theme = load("res://addons/event_system_plugin/assets/themes/debug_theme.tres") as Theme
+	theme = load("res://addons/event_system_plugin/assets/themes/timeline_editor.tres") as Theme
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	_info_label = Label.new()
@@ -321,6 +326,7 @@ func _init() -> void:
 	_sc.size_flags_horizontal = SIZE_EXPAND_FILL
 	_sc.size_flags_vertical = SIZE_EXPAND_FILL
 	_sc.mouse_filter = Control.MOUSE_FILTER_PASS
+	_sc.rect_min_size = Vector2(128, 254)
 	
 	var _dummy_panel := PanelContainer.new()
 	_dummy_panel.size_flags_horizontal = SIZE_EXPAND_FILL

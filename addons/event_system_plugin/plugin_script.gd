@@ -2,16 +2,15 @@ tool
 extends EditorPlugin
 
 const PLUGIN_NAME = "EventSystem"
-const _TimelineEditor = preload("res://addons/event_system_plugin/nodes/editor/timeline_editor/event_timeline_editor.gd")
+const TimelineEditor = preload("res://addons/event_system_plugin/nodes/editor/timeline_editor.gd")
 const _EventManager = preload("res://addons/event_system_plugin/nodes/event_manager/event_manager.gd")
 const _Timeline = preload("res://addons/event_system_plugin/resources/timeline_class/timeline_class.gd")
 const _Event = preload("res://addons/event_system_plugin/resources/event_class/event_class.gd")
 
-var _timeline_editor_scene:PackedScene = load("res://addons/event_system_plugin/nodes/editor/timeline_editor/event_timeline_editor.tscn") as PackedScene
 var _registered_events:Resource = load("res://addons/event_system_plugin/resources/registered_events/registered_events.tres")
 var _welcome_scene:PackedScene = load("res://addons/event_system_plugin/nodes/editor/welcome/hi.tscn")
 
-var _timeline_editor:_TimelineEditor
+var _timeline_editor:TimelineEditor
 var _dock_button:ToolButton
 var _version_button:BaseButton
 
@@ -28,10 +27,8 @@ func get_class(): return PLUGIN_NAME
 
 
 func _enter_tree() -> void:
-	_timeline_editor = _timeline_editor_scene.instance()
-	_timeline_editor._UndoRedo = get_undo_redo()
-	_timeline_editor._PluginScript = self
-	_timeline_editor.connect("ready", _timeline_editor, "fake_ready")
+	_timeline_editor = TimelineEditor.new()
+	
 	_timeline_editor.connect("event_selected", self, "_on_TimelineEditor_event_selected")
 	connect("tree_exiting", _timeline_editor, "queue_free")
 	
@@ -65,7 +62,7 @@ func edit(object: Object) -> void:
 	if object is _Event:
 		return
 	
-	_timeline_editor.edit_resource(object)
+	_timeline_editor.edit_timeline(object)
 
 
 func make_visible(visible: bool) -> void:
