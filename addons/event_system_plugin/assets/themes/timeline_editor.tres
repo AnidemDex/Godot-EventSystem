@@ -44,4 +44,5 @@ EventNode/styles/bg = SubResource( 2 )
 EventNode/styles/bg_left = SubResource( 3 )
 EventNode/styles/bg_right = SubResource( 4 )
 EventNode/styles/outline = SubResource( 1 )
-HBoxContainer/constants/separation = 0
+PanelContainer/constants/identation = 32
+VBoxContainer/constants/separation = 0
