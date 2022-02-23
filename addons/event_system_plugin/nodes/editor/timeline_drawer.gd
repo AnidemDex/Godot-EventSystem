@@ -1,3 +1,4 @@
+tool
 extends Control
 
 const TimelineDisplayer = preload("res://addons/event_system_plugin/nodes/editor/timeline_displayer.gd")
