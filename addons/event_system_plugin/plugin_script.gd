@@ -73,7 +73,7 @@ func make_visible(visible: bool) -> void:
 
 func save_external_data() -> void:
 	if is_instance_valid(_timeline_editor):
-		_timeline_editor.call_deferred("_update_values")
+		_timeline_editor.call_deferred("reload")
 
 
 func register_event(event:Script) -> void:
