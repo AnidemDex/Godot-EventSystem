@@ -37,16 +37,18 @@ class EventMenu extends PopupMenu:
 
 const TimelineDisplayer = preload("res://addons/event_system_plugin/nodes/editor/timeline_displayer.gd")
 const EventNode = preload("res://addons/event_system_plugin/nodes/editor/event_node/event_node.gd")
+const CategoryManager = preload("res://addons/event_system_plugin/nodes/editor/category_manager.gd")
 
 var shortcuts = load("res://addons/event_system_plugin/core/shortcuts.gd")
 
 var timeline_displayer:TimelineDisplayer
-var last_selected_event:Event
+var last_selected_event_node:EventNode
 
 var _sc:ScrollContainer
 var _event_menu:EventMenu
 var _edited_sequence:Resource
 var _info_label:Label
+var _category_manager:CategoryManager
 
 var __undo_redo:UndoRedo # Do not use thid directly, get its reference with _get_undo_redo
 
@@ -216,7 +218,7 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 		
 		if (event.button_index in [BUTTON_LEFT,BUTTON_RIGHT]) and event.pressed:
 			if _event:
-				last_selected_event = _event
+				last_selected_event_node = event_node
 	
 	var duplicate_shortcut = shortcuts.get_shortcut("duplicate")
 	if event.shortcut_match(duplicate_shortcut.shortcut):
@@ -289,13 +291,30 @@ func _on_EventMenu_index_pressed(idx:int) -> void:
 			remove_event(_used_event, _edited_sequence)
 
 
+func _on_CategoryManager_button_pressed(button:Button, event_script:Script) -> void:
+	var idx := -1
+	var timeline := _edited_sequence
+	if is_instance_valid(last_selected_event_node):
+		idx = last_selected_event_node.idx+1
+		timeline = last_selected_event_node.timeline
+	if not timeline:
+		timeline = _edited_sequence
+		idx = -1
+	add_event(event_script.new(), idx, timeline)
+
+
 func _init() -> void:
+	add_constant_override("separation", 2)
 	theme = load("res://addons/event_system_plugin/assets/themes/debug_theme.tres") as Theme
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	_info_label = Label.new()
 	_info_label.name = "Info Label"
 	add_child(_info_label)
+	
+	_category_manager = CategoryManager.new()
+	_category_manager.connect("toolbar_button_pressed", self, "_on_CategoryManager_button_pressed")
+	add_child(_category_manager)
 	
 	_sc = ScrollContainer.new()
 	_sc.follow_focus = true
