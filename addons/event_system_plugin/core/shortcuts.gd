@@ -8,7 +8,8 @@ static func get_shortcut(property: String) -> ShortCut:
 			if Engine.editor_hint:
 				var plugin = ClassDB.instance("EditorPlugin")
 				var settings:EditorSettings = plugin.get_editor_interface().get_editor_settings()
-				shortcut = settings.get_setting("scene_tree/duplicate") as ShortCut
+#				shortcut = settings.get("scene_tree/duplicate") as ShortCut
+				shortcut = null # We can't get shortcuts for now
 				plugin.free()
 			
 			if shortcut == null:
@@ -25,7 +26,8 @@ static func get_shortcut(property: String) -> ShortCut:
 			if Engine.editor_hint:
 				var plugin = ClassDB.instance("EditorPlugin")
 				var settings:EditorSettings = plugin.get_editor_interface().get_editor_settings()
-				shortcut = settings.get_setting("scene_tree/delete") as ShortCut
+#				shortcut = settings.get("scene_tree/delete") as ShortCut
+				shortcut = null # we can't get shortcuts for now
 				plugin.free()
 			
 			if shortcut == null:
