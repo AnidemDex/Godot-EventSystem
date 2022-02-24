@@ -28,6 +28,7 @@ export(bool) var continue_at_end:bool = true setget _set_continue
 
 
 var event_node:Node
+var next_event:Resource
 
 ##########
 # Event Editor Properties
