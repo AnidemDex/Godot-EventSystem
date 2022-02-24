@@ -6,7 +6,9 @@ class_name Timeline, "res://addons/event_system_plugin/assets/icons/timeline_ico
 #	- EventManager node
 #	- Event
 
+# deprecated
 var last_event = null
+# deprecated
 var next_event = null
 var _curr_evnt_idx:int = -1
 
@@ -67,32 +69,25 @@ func get_events() -> Array:
 
 
 func get_next_event() -> Resource:
-	_curr_evnt_idx += 1
-	_update_last_n_next_events()
-	return _event_queue.pop_front()
+	push_warning("Timeline.get_next_event() is deprecated and will be removed in future versions")
+#	_curr_evnt_idx += 1
+#	_update_last_n_next_events()
+#	return _event_queue.pop_front()
+	return null
 
 
 func can_loop() -> bool:
 	return _can_loop
 
 
+# Deprecated
 func get_previous_event() -> Resource:
 	return null
 
 
+# Deprecated
 func _update_last_n_next_events() -> void:
-	var _l_evnt_idx = _curr_evnt_idx-1
-	var _n_evnt_idx = _curr_evnt_idx+1
-	
-	if _l_evnt_idx >= 0 and _l_evnt_idx < _events.size():
-		last_event = _events[_l_evnt_idx]
-	else:
-		last_event = null
-	
-	if _n_evnt_idx >= 0 and _n_evnt_idx < _events.size():
-		next_event = _events[_n_evnt_idx]
-	else:
-		next_event = null
+	return
 
 
 func _init() -> void:
