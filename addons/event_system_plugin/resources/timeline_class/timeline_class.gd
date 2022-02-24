@@ -5,39 +5,41 @@ class_name Timeline, "res://addons/event_system_plugin/assets/icons/timeline_ico
 # Can't reference:
 #	- EventManager node
 #	- Event
+# Note for future devs: Keep this resource as an event container. No magic tricks
 
 # deprecated
 var last_event = null
 # deprecated
 var next_event = null
+
+# deprecated
 var _curr_evnt_idx:int = -1
 
 var _events:Array = [] setget set_events
+
+# deprecated
 var _event_queue:Array = []
+# deprecated
 var _can_loop:bool = false setget ,can_loop
 
 
+# deprecated
 func initialize() -> void:
-	_event_queue = get_events()
+	push_warning("Timeline.initialize() is deprecated and will be removed in future versions")
+#	_event_queue = get_events()
+	return
 
 
+# deprecated
 func event_changed() -> void:
-	emit_changed()
-	property_list_changed_notify()
+	push_warning("Timeline.event_changed() is deprecated and will be removed in future versions")
+#	emit_changed()
+#	property_list_changed_notify()
+	return
 
 
 func set_events(events:Array) -> void:
-	for item in _events:
-		item = item as Resource
-		if item == null:
-			continue
-		if item.is_connected("changed", self, "event_changed"):
-			item.disconnect("changed", self, "event_changed")
-	for item in events:
-		item = item as Resource
-		if not item.is_connected("changed", self, "event_changed"):
-			item.connect("changed", self, "event_changed")
-	_events = events.duplicate()
+	_events = events
 	emit_changed()
 	property_list_changed_notify()
 
@@ -47,15 +49,11 @@ func add_event(event, at_position=-1) -> void:
 		_events.insert(at_position, event)
 	else:
 		_events.append(event)
-	if not event.is_connected("changed", self, "event_changed"):
-		event.connect("changed", self, "event_changed")
 	emit_changed()
 
 
 func erase_event(event) -> void:
 	_events.erase(event)
-	if event.is_connected("changed", self, "event_changed"):
-		event.disconnect("changed", self, "event_changed")
 	emit_changed()
 
 
@@ -92,7 +90,6 @@ func _update_last_n_next_events() -> void:
 
 func _init() -> void:
 	_events = []
-	_event_queue = []
 	resource_name = get_class()
 
 
