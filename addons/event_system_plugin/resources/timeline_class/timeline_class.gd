@@ -45,21 +45,22 @@ func set_events(events:Array) -> void:
 
 
 func add_event(event, at_position=-1) -> void:
-	if at_position >= 0:
-		_events.insert(at_position, event)
-	else:
-		_events.append(event)
-	emit_changed()
+	var property = "event/{idx}"
+	var idx = at_position if at_position > -1 else _events.size()
+	property = property.format({"idx":idx})
+	set(property, event)
 
 
 func erase_event(event) -> void:
 	_events.erase(event)
 	emit_changed()
+	property_list_changed_notify()
 
 
 func remove_event(position:int) -> void:
 	_events.remove(position)
 	emit_changed()
+	property_list_changed_notify()
 
 
 func get_events() -> Array:
@@ -88,6 +89,38 @@ func _update_last_n_next_events() -> void:
 	return
 
 
+func _set(property:String, value) -> bool:
+	var has_property := false
+	
+	if property.begins_with("event/"):
+		var event_idx:int = int(property.split("/", true, 2)[1])
+		if event_idx < _events.size():
+			_events[event_idx] = value
+		else:
+			_events.insert(event_idx, value)
+		
+		var prev_idx:int = event_idx-1
+		
+		if prev_idx > -1:
+			var prev_ev:Resource = _events[prev_idx]
+			var ev_next_pointer:Resource = null
+			if prev_ev:
+				ev_next_pointer = prev_ev.get("next_event")
+				if not ev_next_pointer:
+					prev_ev.set("next_event", value)
+		has_property = true
+		emit_changed()
+	
+	return has_property
+
+
+func _get(property:String):
+	if property.begins_with("event/"):
+		var event_idx:int = int(property.split("/", true, 2)[1])
+		if event_idx < _events.size():
+			return _events[event_idx]
+
+
 func _init() -> void:
 	_events = []
 	resource_name = get_class()
@@ -102,11 +135,12 @@ func get_class() -> String: return "Timeline"
 
 func _get_property_list() -> Array:
 	var p = []
-	p.append(
-		{
-			"name":"_events",
-			"type":TYPE_ARRAY,
-			"usage":PROPERTY_USAGE_NOEDITOR|PROPERTY_USAGE_SCRIPT_VARIABLE
-		}
-	)
+	for event_idx in _events.size():
+		p.append(
+			{
+				"name":"event/{idx}".format({"idx":event_idx}),
+				"type":TYPE_OBJECT,
+				"usage":PROPERTY_USAGE_DEFAULT|PROPERTY_USAGE_SCRIPT_VARIABLE
+			}
+		)
 	return p
