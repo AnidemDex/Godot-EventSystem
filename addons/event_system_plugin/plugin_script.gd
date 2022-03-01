@@ -153,5 +153,4 @@ func _on_TimelineEditor_preview_edit_pressed(resource) -> void:
 
 
 func _on_scene_changed(_scene_root:Node) -> void:
-	if is_instance_valid(_timeline_editor):
-		_timeline_editor._history.clear()
+	pass
