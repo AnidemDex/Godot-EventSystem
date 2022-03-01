@@ -28,6 +28,7 @@ export(bool) var continue_at_end:bool = true setget _set_continue
 
 
 var event_node:Node
+var next_event:Resource setget set_next_event, get_next_event
 
 ##########
 # Event Editor Properties
@@ -73,6 +74,14 @@ func finish() -> void:
 
 func _execute() -> void:
 	finish()
+
+func set_next_event(event:Resource) -> void:
+	next_event = event
+	emit_changed()
+
+
+func get_next_event() -> Resource:
+	return next_event
 
 
 func get_event_name() -> String:
