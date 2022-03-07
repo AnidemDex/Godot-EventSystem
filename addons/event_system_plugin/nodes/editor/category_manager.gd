@@ -105,7 +105,6 @@ func _enter_tree():
 	know_events = load("res://addons/event_system_plugin/resources/registered_events/registered_events.tres") as Timeline
 	if not know_events.is_connected("changed",self,"reload"):
 		know_events.connect("changed",self,"reload")
-	know_events.emit_changed()
 	theme = Theme.new()
 	var button_stylebox:StyleBox = get_stylebox("normal", "Button").duplicate()
 	button_stylebox.content_margin_bottom = 1
@@ -127,6 +126,11 @@ func _on_Category_event_button_added(event_button:EventButton) -> void:
 
 func _on_Category_event_button_pressed(event_button:EventButton) -> void:
 	emit_signal("toolbar_button_pressed", event_button, event_button.event_script)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_POST_ENTER_TREE:
+		know_events.emit_changed()
 
 
 func _init():
