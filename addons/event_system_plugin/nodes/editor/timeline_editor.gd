@@ -67,7 +67,8 @@ func edit_timeline(sequence) -> void:
 	
 	_edited_sequence = sequence
 	timeline_displayer.remove_all_displayed_events()
-	timeline_displayer.load_timeline(sequence)
+	if sequence:
+		timeline_displayer.load_timeline(sequence)
 	update_info_label()
 	
 	_connect_edited_sequence_signals()
@@ -208,21 +209,18 @@ func _connect_edited_sequence_signals() -> void:
 		if not _edited_sequence.is_connected("changed",self,"reload"):
 			_edited_sequence.connect("changed",self,"reload")
 
-
-func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
-	var _event:Event = event_node.event
+func _input(event: InputEvent) -> void:
+	var event_node = last_selected_event_node
+	var focus_owner = get_focus_owner()
 	
-	if event is InputEventMouseButton:
-		if event.button_index == BUTTON_RIGHT and event.pressed:
-			if _event:
-				_event_menu.used_event = _event
-				_event_menu.popup(Rect2(get_global_mouse_position()+Vector2(1,1), _event_menu.rect_size))
-			event_node.accept_event()
-		
-		if (event.button_index in [BUTTON_LEFT,BUTTON_RIGHT]) and event.pressed:
-			if _event:
-				last_selected_event_node = event_node
-				emit_signal("event_selected", _event)
+	if not is_instance_valid(event_node):
+		return
+	
+	if is_instance_valid(focus_owner):
+		if not event_node.is_a_parent_of(focus_owner):
+			return
+	
+	var _event = last_selected_event_node.get("event")
 	
 	var duplicate_shortcut = shortcuts.get_shortcut("duplicate")
 	if event.shortcut_match(duplicate_shortcut.shortcut):
@@ -238,6 +236,23 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 			timeline_displayer.remove_all_displayed_events()
 			remove_event(_event, event_node.timeline)
 		event_node.accept_event()
+
+
+func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
+	var _event:Event = event_node.event
+	
+	if event is InputEventMouseButton:
+		if event.button_index == BUTTON_RIGHT and event.pressed:
+			if _event:
+				_event_menu.used_event = _event
+				_event_menu.popup(Rect2(get_global_mouse_position()+Vector2(1,1), _event_menu.rect_size))
+			event_node.accept_event()
+
+
+func _on_EventNode_focus_entered(event_node:EventNode) -> void:
+	var _event = event_node.event
+	last_selected_event_node = event_node
+	emit_signal("event_selected", _event)
 
 
 func _on_EventNode_subtimeline_added(subtimeline_displayer:Control, event_node:Control) -> void:
@@ -264,6 +279,9 @@ func _on_EventNode_subevent_added(event_node:Control) -> void:
 func _on_TimelineDisplayer_event_node_added(event_node:Control) -> void:
 	if not event_node.is_connected("gui_input", self, "_on_EventNode_gui_input"):
 		event_node.connect("gui_input", self, "_on_EventNode_gui_input", [event_node])
+	
+	if not event_node.event_button.is_connected("focus_entered", self, "_on_EventNode_focus_entered"):
+		event_node.event_button.connect("focus_entered", self, "_on_EventNode_focus_entered", [event_node])
 	
 	if not event_node.is_connected("subtimeline_added", self, "_on_EventNode_subtimeline_added"):
 		event_node.connect("subtimeline_added", self, "_on_EventNode_subtimeline_added", [event_node])
@@ -331,11 +349,13 @@ func _init() -> void:
 	var _dummy_panel := PanelContainer.new()
 	_dummy_panel.size_flags_horizontal = SIZE_EXPAND_FILL
 	_dummy_panel.size_flags_vertical = SIZE_EXPAND_FILL
-	_dummy_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_dummy_panel.focus_mode = Control.FOCUS_NONE
+	_dummy_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	_dummy_panel.focus_mode = Control.FOCUS_CLICK
 	_sc.add_child(_dummy_panel)
 	
 	var timeline_drawer = load("res://addons/event_system_plugin/nodes/editor/timeline_drawer.gd").new()
+	timeline_drawer.focus_mode = Control.FOCUS_NONE
+	timeline_drawer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_dummy_panel.add_child(timeline_drawer)
 	
 	timeline_displayer = TimelineDisplayer.new()
@@ -349,9 +369,6 @@ func _init() -> void:
 	_event_menu.connect("index_pressed", self, "_on_EventMenu_index_pressed")
 	_event_menu.connect("hide", _event_menu, "set", ["used_event", null])
 	add_child(_event_menu)
-	
-	connect("tree_exiting", _info_label, "queue_free")
-	connect("tree_exiting", _sc, "queue_free")
 
 
 func _notification(what: int) -> void:
