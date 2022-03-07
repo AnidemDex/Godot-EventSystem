@@ -1,156 +1,52 @@
 tool
-extends EditorPlugin
+extends "godot_plugin.gd"
 
-const PLUGIN_NAME = "EventSystem"
-const TimelineEditor = preload("res://addons/event_system_plugin/nodes/editor/timeline_editor.gd")
-const _EventManager = preload("res://addons/event_system_plugin/nodes/event_manager/event_manager.gd")
-const _Timeline = preload("res://addons/event_system_plugin/resources/timeline_class/timeline_class.gd")
-const _Event = preload("res://addons/event_system_plugin/resources/event_class/event_class.gd")
+const TimelineEditor = preload("nodes/editor/timeline_editor.gd")
+const EventManagerClass = preload("nodes/event_manager/event_manager.gd")
+const EventClass = preload("resources/event_class/event_class.gd")
+const TimelineClass = preload("resources/timeline_class/timeline_class.gd")
 
-var _registered_events:Resource = load("res://addons/event_system_plugin/resources/registered_events/registered_events.tres")
-var _welcome_scene:PackedScene = load("res://addons/event_system_plugin/nodes/editor/welcome/hi.tscn")
+var timeline_editor:TimelineEditor
+var timeline_dock_button:ToolButton
 
-var _timeline_editor:TimelineEditor
-var _dock_button:ToolButton
-var _version_button:BaseButton
-
-var _plugin_data:ConfigFile = ConfigFile.new()
-
-var event_inspector:EditorInspectorPlugin
-
-
-func _init() -> void:
-	name = PLUGIN_NAME.capitalize()
-	_plugin_data.load("res://addons/event_system_plugin/plugin.cfg")
-
-func get_class(): return PLUGIN_NAME
-
-
-func _enter_tree() -> void:
-	_timeline_editor = TimelineEditor.new()
+func _enter_tree():
+	show_plugin_version_button()
 	
-	_timeline_editor.connect("event_selected", self, "_on_TimelineEditor_event_selected")
-	connect("tree_exiting", _timeline_editor, "queue_free")
+	timeline_editor = TimelineEditor.new()
+	register_plugin_node(timeline_editor)
+	timeline_dock_button = add_control_to_bottom_panel(timeline_editor, "TimelineEditor")
+	timeline_dock_button.hide()
 	
-	_dock_button = add_control_to_bottom_panel(_timeline_editor, "TimelineEditor")
-	_dock_button.visible = false
-	_add_version_button()
-	
-	event_inspector = load("res://addons/event_system_plugin/core/event_inspector.gd").new()
-	add_inspector_plugin(event_inspector)
-	
-	_add_itself_to_editor_meta()
-	
-	connect("scene_changed", self, "_on_scene_changed")
+	connect("scene_changed", self, "_scene_change")
 
 
-func enable_plugin() -> void:
-	_show_welcome()
+func _enable_plugin():
+	show_welcome_node()
 
 
-func handles(object: Object) -> bool:
-	if object is _Event:
+func _handles(object: Object) -> bool:
+	if object is EventManagerClass:
 		return true
 	
-	if object is _Timeline:
+	if object is EventClass:
 		return true
 	
 	return false
 
 
-func edit(object: Object) -> void:
-	if object is _Event:
+func _edit(object: Object) -> void:
+	timeline_editor.set_undo_redo(get_undo_redo())
+	var timeline:Resource = object.get("timeline")
+	if !timeline:
 		return
-	
-	_timeline_editor.edit_timeline(object)
+	timeline_editor.edit_timeline(timeline)
 
 
-func make_visible(visible: bool) -> void:
-	if is_instance_valid(_dock_button):
-		_dock_button.visible = visible
-		_dock_button.pressed = visible
-
-
-func save_external_data() -> void:
-	if is_instance_valid(_timeline_editor):
-		_timeline_editor.call_deferred("reload")
-
-
-func register_event(event:Script) -> void:
-	var events:Array = _registered_events.events.duplicate()
-	if not event in events:
-		events.append(event)
-	_registered_events.set("events", events)
-	var err = ResourceSaver.save(_registered_events.resource_path, _registered_events)
-	if err != OK:
-		push_error("There was an error while trying to register events: %s"%err)
-	_registered_events.emit_changed()
-
-func _exit_tree() -> void:
-	if is_instance_valid(_timeline_editor):
-		remove_control_from_bottom_panel(_timeline_editor)
-		_timeline_editor.queue_free()
-	remove_inspector_plugin(event_inspector)
-	_remove_itself_from_editor_meta()
-
-
-func _show_welcome() -> void:
-	var _popup:Popup = _welcome_scene.instance() as Popup
-	_popup.connect("ready", _popup, "popup_centered_ratio", [0.4])
-	_popup.connect("popup_hide", _popup, "queue_free")
-	_popup.connect("hide", _popup, "queue_free")
-	get_editor_interface().get_base_control().add_child(_popup)
-
-
-func _add_version_button() -> void:
-	var _v = {"version":get_plugin_version()}
-	
-	_version_button = ToolButton.new()	
-	_version_button.text = "ES:[{version}]".format(_v)
-	_version_button.hint_tooltip = "EventSystem version {version}".format(_v)
-	_version_button.connect("pressed", self, "_show_welcome")
-	
-	connect("tree_exiting", _version_button, "free")
-	
-	var _new_color = _version_button.get_color("font_color")
-	_new_color.a = 0.6
-	_version_button.add_color_override("font_color", _new_color)
-
-	_dock_button.get_parent().get_parent().add_child(_version_button)
-	_dock_button.get_parent().get_parent().move_child(_version_button, 1)
-
-
-func _add_itself_to_editor_meta() -> void:
-	get_tree().set_meta("EventSystem", self)
-
-
-func _remove_itself_from_editor_meta() -> void:
-	get_tree().remove_meta("EventSystem")
-
-
-func get_plugin_version() -> String:
-	var _version = _plugin_data.get_value("plugin","version", "0")
-	return _version
-
-var _last_selected_node:Control = null
-func _on_TimelineEditor_event_selected(event:_Event) -> void:
-	var _focus_owner = _timeline_editor.get_focus_owner()
-	
-	if _last_selected_node == _focus_owner:
-		return
-
-	_last_selected_node = _focus_owner
-	get_editor_interface().edit_resource(event)
-	_focus_owner.grab_focus()
-
-
-func _on_RegisteredEvents_changed() -> void:
-	print("Events changed")
-
-
-func _on_TimelineEditor_preview_edit_pressed(resource) -> void:
-	get_editor_interface().edit_resource(resource)
-
-
-func _on_scene_changed(_scene_root:Node) -> void:
-	pass
+func _make_visible(visible: bool) -> void:
+	if visible:
+		timeline_dock_button.show()
+		make_bottom_panel_item_visible(timeline_editor)
+	else:
+		if timeline_dock_button.is_visible_in_tree():
+			hide_bottom_panel()
+		timeline_dock_button.hide()
