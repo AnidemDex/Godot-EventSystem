@@ -219,6 +219,12 @@ func register_control_to_dock(control:Control, dock_slot:int = -1) -> void:
 	__nodes_in_dock.append(control)
 
 
+func register_editor_plugin(plugin:EditorInspectorPlugin) -> void:
+	assert(not plugin in __registered_editor_plugins, "The plugin %s is already registered"%plugin)
+	__registered_editor_plugins.append(plugin)
+	add_inspector_plugin(plugin)
+
+
 ## Adds a node to the editor base control node.
 ## This is similar to do get_editor_interface().get_base_control().add_child(<Node>)
 ## but it registers the node as a node that belongs to this plugin.
@@ -629,6 +635,7 @@ var __welcome_node:WelcomeNode
 var __version_button:BaseButton
 
 var __registered_nodes:Array = []
+var __registered_editor_plugins:Array = []
 var __nodes_in_dock:Array = []
 
 var __plugin_sensible_data_modified:bool = false
@@ -701,6 +708,13 @@ func __cleanup() -> void:
 			remove_control_from_docks(node)
 		
 		node.free()
+	
+	for plugin in __registered_editor_plugins:
+		plugin = plugin as EditorPlugin
+		if not plugin:
+			# why is this not a valid plugin???
+			continue
+		remove_inspector_plugin(plugin)
 	
 	__registered_nodes.clear()
 	__nodes_in_dock.clear()

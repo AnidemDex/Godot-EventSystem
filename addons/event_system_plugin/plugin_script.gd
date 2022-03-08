@@ -10,6 +10,9 @@ var timeline_editor:TimelineEditor
 var timeline_dock_button:ToolButton
 
 func _enter_tree():
+	var inspector:EditorInspectorPlugin = load("res://addons/event_system_plugin/core/event_inspector.gd").new()
+	register_editor_plugin(inspector)
+	
 	show_plugin_version_button()
 	timeline_dock_button = add_control_to_bottom_panel(timeline_editor, "TimelineEditor")
 	timeline_dock_button.hide()
