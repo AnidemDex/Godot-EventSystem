@@ -16,17 +16,10 @@ class EventButton extends HBoxContainer:
 	## The description of [member event]
 	var description_label:Label
 	var idx_label:Label
-
-	# This does not calls grab_focus(), is called when the node grabs focus
-	func focus() -> void:
-		var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
-		outline_stylebox.border_color = get_color("hover", "EventNode")
-
-
-	# This does not calls release_focus(), is called when the node loses focus
-	func focus_leave() -> void:
-		var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
-		outline_stylebox.border_color = get_color("outline", "EventNode")
+	var button:Button
+	
+	func set_button_group(button_group:ButtonGroup) -> void:
+		button.group = button_group
 
 
 	func add_node(node:Control) -> void:
@@ -38,7 +31,7 @@ class EventButton extends HBoxContainer:
 		panel.show_behind_parent = true
 		add_child(panel)
 		
-		var first_item = 0
+		var first_item = 1
 		var last_item = get_child_count()-1
 		var other_items = []
 		for child_idx in get_child_count():
@@ -64,7 +57,7 @@ class EventButton extends HBoxContainer:
 
 	func get_left_node() -> PanelContainer:
 		if get_child_count() > 0:
-			return get_child(0) as PanelContainer
+			return get_child(1) as PanelContainer
 		return null
 
 	func get_right_node() -> PanelContainer:
@@ -121,23 +114,18 @@ class EventButton extends HBoxContainer:
 		update()
 
 
-	func _global_focus_changed(control:Control) -> void:
-		if control == self or is_a_parent_of(control):
-			return
-		
-		if control is get_script():
-			__fake_focus_exit()
-
-
-	###
-	# Fake methods
-	# methods called by notifications to avoid override virtual ones
-	###
-	func __fake_ready() -> void:
-		get_tree().root.connect("gui_focus_changed", self, "_global_focus_changed", [], CONNECT_DEFERRED)
-
-
 	func _initialize():
+		button = Button.new()
+		button.toggle_mode = true
+		button.focus_mode = Control.FOCUS_ALL
+		button.mouse_filter = Control.MOUSE_FILTER_PASS
+		button.connect("mouse_entered", self, "__fake_mouse_enter")
+		button.connect("mouse_exited", self, "__fake_mouse_exit")
+		button.connect("focus_entered", self, "__fake_focus_enter")
+		button.connect("focus_exited", self, "__fake_focus_exit")
+		button.connect("toggled", self, "_on_Button_toggled")
+		add_child(button)
+		
 		name_label = Label.new()
 		name_label.name = "EventName"
 		add_node(name_label)
@@ -154,9 +142,10 @@ class EventButton extends HBoxContainer:
 			node.align = Label.ALIGN_LEFT
 			node.valign = Label.VALIGN_CENTER
 		
-		for node_idx in 2:
+		for node_idx in [1,2]:
 			var node:PanelContainer = get_child(node_idx) as PanelContainer
-			if node_idx == 0:
+			if not node: continue
+			if node_idx == 1:
 				node.size_flags_stretch_ratio = 2
 			else:
 				node.size_flags_stretch_ratio = 8
@@ -175,11 +164,13 @@ class EventButton extends HBoxContainer:
 
 
 	func __fake_focus_enter() -> void:
-		focus()
+		var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
+		outline_stylebox.set_border_width_all(4)
 
 
 	func __fake_focus_exit() -> void:
-		focus_leave()
+		var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
+		outline_stylebox.set_border_width_all(2)
 
 
 	func __fake_mouse_enter() -> void:
@@ -190,29 +181,37 @@ class EventButton extends HBoxContainer:
 	func __fake_mouse_exit() -> void:
 		for style in [get_stylebox("bg", "EventNode"), get_stylebox("bg_right", "EventNode")]:
 			style.bg_color = get_color("default", "EventNode")
+	
+	
+	func _on_Button_toggled(button_pressed:bool) -> void:
+		var outline_stylebox:StyleBoxFlat = get_stylebox("outline", "EventNode")
+		var color:Color
+		
+		outline_stylebox.set_border_width_all(2)
+		
+		if button_pressed:
+			color = get_color("hover", "EventNode")
+		else:
+			color = get_color("outline", "EventNode")
+		
+		outline_stylebox.border_color = color
 
 
 	func _notification(what: int) -> void:
 		match what:
 			NOTIFICATION_DRAW:
 				__fake_draw()
-			NOTIFICATION_FOCUS_ENTER:
-				__fake_focus_enter()
-			NOTIFICATION_FOCUS_EXIT:
-				__fake_focus_exit()
-			NOTIFICATION_MOUSE_ENTER:
-				__fake_mouse_enter()
-			NOTIFICATION_MOUSE_EXIT:
-				__fake_mouse_exit()
+			NOTIFICATION_SORT_CHILDREN:
+				fit_child_in_rect(button, get_rect())
 			NOTIFICATION_READY:
-				__fake_ready()
+				button.set_meta("event_node", get_parent())
 
 
 	func _init() -> void:
 		theme = load("res://addons/event_system_plugin/assets/themes/event_node/event_node.tres") as Theme
 		theme = theme.duplicate(true)
 		rect_clip_content = true
-		focus_mode = Control.FOCUS_ALL
+		focus_mode = Control.FOCUS_NONE
 		mouse_filter = Control.MOUSE_FILTER_PASS
 		name = "EventButton"
 		_initialize()
@@ -294,10 +293,12 @@ func add_subevent(event) -> void:
 	add_child(event_node)
 	event_node.call_deferred("update_values")
 
+func set_button_group(button_group:ButtonGroup) -> void:
+	event_button.set_button_group(button_group)
+
 
 func _init():
 	event_button = EventButton.new()
-	event_button.set_drag_forwarding(self)
 	add_child(event_button)
 	
 	subtimeline_container = SubTimelineNode.new()
