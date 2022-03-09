@@ -54,6 +54,7 @@ var _info_label:Label
 var _category_manager:CategoryManager
 
 var __undo_redo:UndoRedo # Do not use thid directly, get its reference with _get_undo_redo
+var __group:ButtonGroup
 
 func set_undo_redo(value:UndoRedo) -> void:
 	# Sets UndoRedo, but this object can leave leaked isntances so make sure to set it
@@ -238,6 +239,11 @@ func _input(event: InputEvent) -> void:
 		event_node.accept_event()
 
 
+func _on_EventButton_selected(button) -> void:
+	last_selected_event_node = button.get_meta("event_node")
+	emit_signal("event_selected", last_selected_event_node.event)
+
+
 func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 	var _event:Event = event_node.event
 	
@@ -247,12 +253,6 @@ func _on_EventNode_gui_input(event: InputEvent, event_node:EventNode) -> void:
 				_event_menu.used_event = _event
 				_event_menu.popup(Rect2(get_global_mouse_position()+Vector2(1,1), _event_menu.rect_size))
 			event_node.accept_event()
-
-
-func _on_EventNode_focus_entered(event_node:EventNode) -> void:
-	var _event = event_node.event
-	last_selected_event_node = event_node
-	emit_signal("event_selected", _event)
 
 
 func _on_EventNode_subtimeline_added(subtimeline_displayer:Control, event_node:Control) -> void:
@@ -280,9 +280,6 @@ func _on_TimelineDisplayer_event_node_added(event_node:Control) -> void:
 	if not event_node.is_connected("gui_input", self, "_on_EventNode_gui_input"):
 		event_node.connect("gui_input", self, "_on_EventNode_gui_input", [event_node])
 	
-	if not event_node.event_button.is_connected("focus_entered", self, "_on_EventNode_focus_entered"):
-		event_node.event_button.connect("focus_entered", self, "_on_EventNode_focus_entered", [event_node])
-	
 	if not event_node.is_connected("subtimeline_added", self, "_on_EventNode_subtimeline_added"):
 		event_node.connect("subtimeline_added", self, "_on_EventNode_subtimeline_added", [event_node])
 	
@@ -290,7 +287,7 @@ func _on_TimelineDisplayer_event_node_added(event_node:Control) -> void:
 		event_node.connect("subevent_added", self, "_on_EventNode_subevent_added")
 	
 	event_node.set_drag_forwarding(self)
-
+	event_node.set_button_group(__group)
 
 func _on_EventMenu_index_pressed(idx:int) -> void:
 	var _used_event:Event = _event_menu.used_event as Event
@@ -327,6 +324,8 @@ func _on_CategoryManager_button_pressed(button:Button, event_script:Script) -> v
 
 
 func _init() -> void:
+	__group = ButtonGroup.new()
+	__group.connect("pressed", self, "_on_EventButton_selected")
 	add_constant_override("separation", 2)
 	theme = load("res://addons/event_system_plugin/assets/themes/timeline_editor.tres") as Theme
 	mouse_filter = Control.MOUSE_FILTER_STOP
