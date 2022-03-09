@@ -45,10 +45,10 @@ func set_events(events:Array) -> void:
 
 
 func add_event(event, at_position=-1) -> void:
-	var property = "event/{idx}"
 	var idx = at_position if at_position > -1 else _events.size()
-	property = property.format({"idx":idx})
-	set(property, event)
+	_events.insert(idx, event)
+	emit_changed()
+	property_list_changed_notify()
 
 
 func erase_event(event) -> void:
