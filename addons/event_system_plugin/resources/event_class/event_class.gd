@@ -76,8 +76,19 @@ func _execute() -> void:
 	finish()
 
 func set_next_event(event:Resource) -> void:
+	if event:
+		var other:Resource = event.get("next_event")
+		if other == self:
+			push_error("Can't cross reference events. Make a new event as pointer and use that instead.")
+			next_event = null
+			emit_changed()
+			property_list_changed_notify()
+			return
+	
 	next_event = event
 	emit_changed()
+	property_list_changed_notify()
+	
 
 
 func get_next_event() -> Resource:
