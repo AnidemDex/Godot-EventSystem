@@ -9,5 +9,5 @@ func _init() -> void:
 
 
 func _execute() -> void:
-	event_manager.timeline = null
+	get_event_manager_node().timeline = null
 	finish()
