@@ -10,7 +10,7 @@ signal event_finished(event)
 signal timeline_started(timeline_resource)
 signal timeline_finished(timeline_resource)
 
-export(NodePath) var event_node_path:NodePath = "."
+export(NodePath) var event_node_fallback_path:NodePath = "."
 export(bool) var start_on_ready:bool = false
 
 var timeline
@@ -56,12 +56,13 @@ func _execute_event(event:Event) -> void:
 	if event == null:
 		return
 	
-	var node:Node = self if event_node_path == @"." else get_node(event_node_path)
+	var node:Node = self if event_node_fallback_path == @"." else get_node(event_node_fallback_path)
 	event.set("event_manager", self)
+	event.set("event_node_fallback", node)
 	
 	_connect_event_signals(event)
 	
-	event.execute(node)
+	event.execute()
 
 
 func _connect_event_signals(event:Event) -> void:

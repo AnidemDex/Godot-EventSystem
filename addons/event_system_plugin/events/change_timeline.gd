@@ -33,7 +33,7 @@ func _execute() -> void:
 		var _discard = _event_queue.pop_front()
 	
 	timeline._event_queue = _event_queue
-	event_manager.start_timeline(timeline)
+	get_event_manager_node().start_timeline(timeline)
 
 
 func set_timeline_path(value:String) -> void:

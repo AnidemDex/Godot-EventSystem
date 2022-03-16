@@ -19,7 +19,7 @@ func _execute(caller=null) -> void:
 	push_warning("Event [%s] is deprecated and will be removed in future versions. Use EventGoto instead."%event_name)
 	
 	if event_index >= 0:
-		var _timeline:Timeline = event_manager.timeline
+		var _timeline:Timeline = get_event_manager_node().timeline
 		
 		if not _timeline:
 			finish()
