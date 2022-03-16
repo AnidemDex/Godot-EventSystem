@@ -4,14 +4,13 @@ extends "res://addons/event_system_plugin/resources/timeline_class/timeline_clas
 func _init():
 	_events = [
 		load("res://addons/event_system_plugin/events/call_from.gd").new(),
-		load("res://addons/event_system_plugin/events/change_timeline.gd").new(),
 		load("res://addons/event_system_plugin/events/comment.gd").new(),
 		load("res://addons/event_system_plugin/events/emit_signal.gd").new(),
 		load("res://addons/event_system_plugin/events/end_timeline.gd").new(),
 		load("res://addons/event_system_plugin/events/hide.gd").new(),
-		load("res://addons/event_system_plugin/events/jump_to.gd").new(),
 		load("res://addons/event_system_plugin/events/new_condition.gd").new(),
 		load("res://addons/event_system_plugin/events/set.gd").new(),
 		load("res://addons/event_system_plugin/events/show.gd").new(),
 		load("res://addons/event_system_plugin/events/wait.gd").new(),
+		load("res://addons/event_system_plugin/events/goto.gd").new()
 		]
