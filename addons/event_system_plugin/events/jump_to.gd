@@ -1,6 +1,6 @@
 tool
 extends Event
-class_name EventJumpToEvent
+#class_name EventJumpToEvent
 
 export(int) var event_index:int = -1 setget set_event_idx
 
@@ -12,9 +12,11 @@ func _init() -> void:
 	continue_at_end = true
 	event_category = "Logic"
 	event_hint = "Jumps to an event in the same timeline"
+	push_warning("Event [%s] is deprecated and will be removed in future versions. Use EventGoto instead."%event_name)
 
 
 func _execute(caller=null) -> void:
+	push_warning("Event [%s] is deprecated and will be removed in future versions. Use EventGoto instead."%event_name)
 	
 	if event_index >= 0:
 		var _timeline:Timeline = event_manager.timeline
