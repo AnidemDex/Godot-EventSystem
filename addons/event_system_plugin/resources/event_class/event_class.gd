@@ -34,7 +34,7 @@ var next_event:Resource setget set_next_event, get_next_event
 var event_node
 
 # deprecated. Use get_event_manager_node() instead
-var event_manager_node
+var event_manager
 
 ##########
 # Event Editor Properties
