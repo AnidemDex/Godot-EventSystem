@@ -30,6 +30,12 @@ var event_node_path:NodePath setget _set_event_node_path
 
 var next_event:Resource setget set_next_event, get_next_event
 
+# deprecated. Use get_event_node() instead
+var event_node
+
+# deprecated. Use get_event_manager_node() instead
+var event_manager_node
+
 ##########
 # Event Editor Properties
 ##########
