@@ -9,11 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Lastest Version
 
 {% content-ref url="1.x.md" %}
-[1.x.md](1.x.md)
+[1.4.md](1.x.md)
 {% endcontent-ref %}
 
 ## Current Stable Version
 
 {% content-ref url="1.x.md" %}
-[1.x.md](1.x.md)
+[1.4.md](1.x.md)
 {% endcontent-ref %}
