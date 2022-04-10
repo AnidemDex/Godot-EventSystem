@@ -1,13 +1,13 @@
 # Making a custom event
 
-Events are the code fragments that the EventManager will execute, contained in a sequence (Timeline)..
+Events are the code fragments that the EventManager will execute, contained in a sequence (Timeline).
 
 By default the plugin includes some events that correspond to tasks commonly performed in code: making a comment, a boolean check, setting a variable to a certain value, among others.
 
 You can create and add your own events to this system without much trouble, which gives you the ability to execute your own code snippets under your own rules.
 
 {% hint style="info" %}
-So far I have come up with the idea of creating a rhythm core, a Pokémon-style battle interaction and a [dialogue system](https://app.gitbook.com/o/ANe5SjHDLnAFjCnVwR4d/s/-MaUroYBpPsgfLKIUmns/). You can replicate this and more!
+So far I have come up with the idea of creating a rhythm core, a Pokémon-style battle interaction and a [dialogue system](https://github.com/AnidemDex/Godot-DialogPlugin). You can replicate this and more!
 {% endhint %}
 
 ## Event's structure
@@ -16,13 +16,13 @@ So far I have come up with the idea of creating a rhythm core, a Pokémon-style 
 
 Here you can see the structure of how is (more or less) the logic used after the execution of an event:
 
-1. EventManager starts the sequence.&#x20;
-2. EventManager executes an event.
+1. EventManager starts the sequence. This can be using the first element in the timeline or using an event directly.
+2. EventManager executes the event.
 3. The event emits the signal `event_started`.
-4. The event calls your `execute()` function.
+4. The event calls your `_execute()` function.
 5. EventManager waits for the `event_finished` signal to know to continue with the next event.
 
-The process is repeated until there are no more events in the sequence.
+The process is repeated until there are no more events in the sequence, or when the EventManager can't find a defined `next_event` in the event.
 
 ## Make a script
 
