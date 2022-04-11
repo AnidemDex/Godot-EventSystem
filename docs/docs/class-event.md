@@ -1,117 +1,115 @@
 ---
-description: Clase base para todos los eventos
+description: Base class for all Event types
 ---
 
 # Event
 
-Hereda: Resource
+Inherits: Resource
 
-## Descripción <a href="description" id="description"></a>
+## Description <a href="description" id="description"></a>
 
-Todos los eventos que puede contener un Timeline y pueden ser ejecutados por EventManager dependen de esta clase.
+All events that a Timeline can contain and can be executed by EventManager relies on this classs.
 
-## Propiedades <a href="properties" id="properties"></a>
+## Properties <a href="properties" id="properties"></a>
 
-| Tipo         | Nombre            | Valor por defecto |
-| ------------ | ----------------- | ----------------- |
-| bool         | continue\_at\_end | true              |
-| Node         | event\_node       | null              |
-| EventManager | event\_manager    | null              |
+| Type             | Name            | Default Value |
+| ---------------- | ----------------- | ----------------- |
+| bool             | continue\_at\_end | true              |
+| NodePath         | event\_node\_path | `NodePath(`<mark style="color:red;">`"."`</mark>`)`              |
+| Event            | next\_event       | null              |
 
-## Métodos <a href="methods" id="methods"></a>
+## Methods <a href="methods" id="methods"></a>
 
-| Tipo | Nombre      |
+| Type | Name      |
 | ---- | ----------- |
 | void | \_execute() |
 | void | execute()   |
 | void | finish()    |
+| Node | get_event_node() |
 
-## Señales <a href="signals" id="signals"></a>
+## Signals <a href="signals" id="signals"></a>
 
 * event\_started(event\_resource)
 * event\_finished(event\_resource)
 
-## Descripción de propiedades <a href="property_descriptions" id="property_descriptions"></a>
+## Property descriptions <a href="property_descriptions" id="property_descriptions"></a>
 
 ### bool continue\_at\_end <a href="property_continue_at_end" id="property_continue_at_end"></a>
 
-Si es verdadero, el EventManager que ejecuta este evento ejecutará el siguiente evento en el momento en que este evento termine.
+If `true`, EventManager node that is executing this event will execute the next event when this event ends.
 
 ### Node event\_node <a href="property_event_node" id="property_event_node"></a>
 
-El nodo al cual le será aplicado el evento. Todas las variables que modifique el evento serán relativos a este nodo.
+Deprecated. Use `get_event_node()` instead.
 
 ### EventManager event\_manager <a href="property_event_manager" id="property_event_manager"></a>
 
-El nodo EventManager que administra este evento. El nodo es asignado automaticamente.
+Deprecated. Use `get_event_manager_node()` instead.
 
-## Propiedades del evento
+## Event properties
 
 {% hint style="info" %}
-Las siguientes son propiedades que se usan con el editor de eventos.
+These are properties used with the timeline editor and event inspector.
 
-Cambiar su valor en juego no afecta su funcionamiento.
+Modifying its value doesn't affect their functionality.
 {% endhint %}
 
-Si quieres crear eventos personalizados, debes cambiar sus valores en su constructor `_init()`
+If you want to create custom events, modify these values inside `_init()` constructor.
 
 ### Texture event\_icon
 
-El icono de el evento mostrado en el editor.
+The icon used in the editor.
 
 ### Color event\_color
 
-El color del evento usado en el editor.
+Event color used in the editor.
 
 ### String event\_name
 
-El nombre del evento mostrado en el editor.
+Name of the event used in the editor. This is replaced by `resource_name` if any.
 
 ### String event\_preview
 
-Una cadena de texto que se mostrará junto al nombre del evento en el editor.
+String used in the timeline editor, displayed next to the event name.
 
-Puedes poner propiedades del evento entre los caracteres { y } para mostrarlas en el editor.
-
-Si escribes:
+You can add event properties between `{}` to show them in the editor:
 
 ```coffeescript
 event_preview_string = "{resource_name}"
+# The editor will show the resource name instead of "{resource_name}"
 ```
-
-La vista previa mostrada será el nombre del recurso en lugar de `{resource_name}`.
 
 ### String event\_hint
 
-Representa la descripción del evento. Es buena idea mantener esta descripción corta.
+Represents event description. Is show when you hover the event button. Is a good idea to keep it short.
 
 ### String event\_category
 
-Representa la categoría a la que pertenece este evento.
+Represents the event category. Used by the timeline editor toolbar.
 
-## Descripción de métodos
+## Method descriptions
 
 ### void \_execute() <a href="method_descriptions" id="method_descriptions"></a>
 
-Es llamado cuando se ejecuta el evento.
+Called when the event is executed by EventManager.
 
-Este método debe ser sobrescrito si se planea crear un evento personalizado.
+This method should be overwrited if you want to create a personalized event.
 
-No debe ser llamado directamente.
+**Do not call this method directly**
 
 ### void execute() <a href="method_execute" id="method_execute"></a>
 
-Ejecuta el evento.
+Executes the event.
 
-Este método no debe ser sobrescrito si se planea crear un evento personalizado.
+**Do not overwrite this method if you want to create a personalized event.**
 
 ### void finish() <a href="method_finish" id="method_finish"></a>
 
-Debe ser llamado al completar el evento para indicar que el evento ha finalizado.
+Must be called to notify that you end this event.
 
 ## Propiedades opcionales
 
-Propiedades usadas como pistas para el editor de eventos
+These properties are used as hints for editor inspector.
 
 \<property>\_ignore
 

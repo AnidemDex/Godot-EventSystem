@@ -16,6 +16,8 @@ You can join the [Discord server](https://discord.gg/83YgrKgSZX)cto give feedbac
 
 EventSystem is a Godot plugin that will help you manage sequential events, easy to implement and fully extensible, allowing you to execute code snippets in order according to the conditions you give it.
 
+Our goal is to provide a visible way to create events, just as if it were a visual style of code.
+
 This plugin doesn't do much on its own, but it promises to help you with the task of helping you control events. These events you must do on your own. Some tasks that are commonly done in code were included in the plugin.
 
 ## 🎉Getting started
