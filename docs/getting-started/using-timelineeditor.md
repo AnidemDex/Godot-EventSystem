@@ -10,6 +10,8 @@ The event editor consists of 3 essential parts for modifying Timeline event sequ
 2. The event list
 3. The events
 
+**The event editor appears when you select an `EventManager` node, and can be edited if that node has a proper `Timeline` resource.**
+
 ## Event buttons
 
 ![](../.gitbook/assets/event\_buttons\_toolbar.png)
@@ -38,7 +40,7 @@ You can drag and drop any event from its name to rearrange or delete it.
 
 
 
-## Eventos
+## Events
 
 Event nodes are a visual representation of any event. Their structure is as follows:
 
