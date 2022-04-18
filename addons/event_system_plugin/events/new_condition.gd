@@ -11,15 +11,19 @@ var events_else:String setget _set_else_timeline
 var _events_if:Resource setget set_if_timeline, get_if_timeline
 var _events_else:Resource setget set_else_timeline, get_else_timeline
 
+var next_event
+
 func _execute() -> void:
 	var variables:Dictionary = _Utils.get_property_values_from(get_event_node())
 	
 	var evaluated_condition = _Utils.evaluate(condition, get_event_node(), variables)
 	
 	if evaluated_condition and (str(evaluated_condition) != condition):
-		next_event = get_if_timeline().get("event/0")
+		get_event_manager_node().set("timeline", get_if_timeline())
 	else:
-		next_event = get_else_timeline().get("event/0")
+		get_event_manager_node().set("timeline", get_else_timeline())
+	
+	next_event = "0"
 	
 	finish()
 
