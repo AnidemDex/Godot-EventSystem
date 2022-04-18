@@ -3,7 +3,7 @@ extends Event
 class_name EventGoTo
 
 # The next event hint of this event. "<index>;<timeline>"
-export var next_event:String = "" setget set_next_event
+var next_event:String = "" setget set_next_event
 
 func _init() -> void:
 	event_name = "Go to Event"
