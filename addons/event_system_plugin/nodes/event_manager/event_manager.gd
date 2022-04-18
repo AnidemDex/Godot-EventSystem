@@ -49,8 +49,11 @@ func go_to_next_event() -> void:
 				new_timeline = load(new_timeline) as Timeline
 				if new_timeline:
 					timeline = new_timeline
-	else:
-		current_idx += 1
+		else:
+			current_idx += 1
+	
+	if current_idx < 0:
+		current_idx = 0
 	
 	event = timeline.get("event/{idx}".format({"idx":current_idx}))
 	current_event = event
@@ -64,6 +67,7 @@ func go_to_next_event() -> void:
 
 func _execute_event(event:Event) -> void:
 	if event == null:
+		assert(false)
 		return
 	
 	var node:Node = self if event_node_fallback_path == @"." else get_node(event_node_fallback_path)
