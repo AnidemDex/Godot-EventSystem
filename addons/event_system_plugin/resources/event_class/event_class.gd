@@ -131,12 +131,16 @@ func _get_property_list() -> Array:
 func property_can_revert(property:String) -> bool:
 	if property == "event_node_path":
 		return true
+	if property == "next_event":
+		return true
 	return false
 
 
 func property_get_revert(property:String):
 	if property == "event_node_path":
 		return NodePath()
+	if property == "next_event":
+		return null
 
 
 func _to_string() -> String:
