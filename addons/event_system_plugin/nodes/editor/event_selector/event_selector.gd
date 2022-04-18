@@ -1,20 +1,30 @@
 tool
 extends ConfirmationDialog
 
-signal event_selected(event)
+signal event_selected(event, timeline_path)
 
 var tree:Tree
 var root:TreeItem
 
 var last_selected_item = null
+var external_path:String = ""
+var used_timeline:Resource = null
+
+func _notification(what):
+	if what == NOTIFICATION_POPUP_HIDE:
+		if not visible:
+			set_deferred("external_path", "")
+			set_deferred("used_timeline", null)
 
 func build_timeline(timeline) -> void:
+	external_path = ""
 	if root:
 		root.free()
 	
 	tree = $VBoxContainer/Tree
 	root = tree.create_item()
 	root.set_text(0, "Timeline")
+	root.disable_folding = true
 	get_ok().disabled = true
 	
 	for event in timeline.get_events():
@@ -22,6 +32,8 @@ func build_timeline(timeline) -> void:
 		item.set_text(0, str(event.get("event_name")))
 		item.set_icon(0, event.get("event_icon"))
 		item.set_meta("event", event)
+	
+	used_timeline = timeline
 
 
 func get_selected_event() -> Resource:
@@ -32,6 +44,7 @@ func get_selected_event() -> Resource:
 		selected_event = item.get_meta("event")
 	
 	return selected_event
+
 
 func _on_Tree_item_selected():
 	get_ok().disabled = false
@@ -48,7 +61,11 @@ func _on_Tree_item_double_clicked():
 
 
 func _on_ConfirmationDialog_confirmed():
-	emit_signal("event_selected", get_selected_event())
+	var event = get_selected_event()
+	var events:Array = used_timeline.get_events()
+	var event_idx = events.find(event)
+	
+	emit_signal("event_selected", event_idx, external_path)
 
 
 func _on_External_pressed():
@@ -72,3 +89,4 @@ func _on_external_file_selected(path:String) -> void:
 		return
 	
 	build_timeline(res)
+	external_path = path
