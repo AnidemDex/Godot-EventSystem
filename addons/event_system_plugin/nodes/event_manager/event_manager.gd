@@ -43,7 +43,9 @@ func go_to_next_event() -> void:
 		if "next_event" in current_event and current_event["next_event"] != "":
 			var data = current_event.get("next_event").split(";")
 			current_idx = int(data[0])
-			var new_timeline = data[1]
+			var new_timeline = ""
+			if data.size() > 1:
+				new_timeline = data[1]
 			
 			if new_timeline != "":
 				new_timeline = load(new_timeline) as Timeline
