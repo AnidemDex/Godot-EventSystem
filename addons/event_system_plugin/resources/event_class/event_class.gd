@@ -28,18 +28,12 @@ export(bool) var continue_at_end:bool = true setget _set_continue
 
 var event_node_path:NodePath setget _set_event_node_path
 
-# deprecated. Use get_event_node() instead
-var event_node
-
-# deprecated. Use get_event_manager_node() instead
-var event_manager
-
 ##########
 # Event Editor Properties
 ##########
 
 ## The event icon that'll be displayed in the editor
-var event_icon:Texture = load("res://addons/event_system_plugin/assets/icons/event_icons/warning.png")
+var event_icon:Texture setget ,get_event_icon
 
 ## The event color that event node will take in the editor
 var event_color:Color = Color("FBB13C")
@@ -100,6 +94,17 @@ func get_event_node() -> Node:
 	return event_node
 
 
+func get_event_icon() -> Texture:
+	if event_icon:
+		return event_icon
+	
+	var theme:Theme = load("res://addons/event_system_plugin/assets/themes/timeline_editor.tres")
+	var good_name = event_name.replace(" ","_").to_lower()
+	if theme.has_icon(good_name, "EventIcons"):
+		return theme.get_icon(good_name, "EventIcons") as Texture
+	
+	return theme.get_icon("custom", "EventIcons") as Texture
+
 func _set_continue(value:bool) -> void:
 	continue_at_end = value
 	property_list_changed_notify()
@@ -113,25 +118,32 @@ func _set_event_node_path(value:NodePath) -> void:
 
 
 func _set(property: String, value) -> bool:
-	var has_property := false
 	
 	if property == "event_manager":
 		_event_manager = value
-		has_property = true
+		return true
 	
-	return has_property
+	if property == "resource_name":
+		event_name = property
+		emit_changed()
+		property_list_changed_notify()
+		return true
+	
+	return false
+
+func _get(property: String):
+	if property == "resource_name":
+		return event_name
 
 
 func _get_property_list() -> Array:
 	var p:Array = []
 	p.append({"name":"event_node_path", "type":TYPE_NODE_PATH})
 	return p
-
-
+	
+	
 func property_can_revert(property:String) -> bool:
 	if property == "event_node_path":
-		return true
-	if property == "next_event":
 		return true
 	return false
 
@@ -139,8 +151,6 @@ func property_can_revert(property:String) -> bool:
 func property_get_revert(property:String):
 	if property == "event_node_path":
 		return NodePath()
-	if property == "next_event":
-		return null
 
 
 func _to_string() -> String:

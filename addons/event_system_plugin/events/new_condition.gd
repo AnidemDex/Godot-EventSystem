@@ -84,15 +84,14 @@ func _set_else_timeline(timeline_path:String) -> void:
 	property_list_changed_notify()
 
 
-func _get(property: String):
-	if property == "custom_event_node":
-		return load("res://addons/event_system_plugin/nodes/editor/event_node/event_condition_node.gd").new()
+#func _get(property: String):
+#	if property == "custom_event_node":
+#		return load("res://addons/event_system_plugin/nodes/editor/event_node/event_condition_node.gd").new()
 
 func _init() -> void:
 	event_name = "Condition"
 	event_color = Color("#FBB13C")
-	event_icon = load("res://addons/event_system_plugin/assets/icons/event_icons/condition_event.png") as Texture
-	event_preview_string = "If [ {condition} ]:"
+	event_preview_string = "[ {condition} ]:"
 	event_hint = "Similar to if-else statement.\nEvaluates a condition and execute events accordingly."
 	event_category = "Logic"
 	continue_at_end = true

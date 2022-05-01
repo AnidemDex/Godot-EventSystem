@@ -1,18 +1,103 @@
-[gd_resource type="Resource" load_steps=13 format=2]
+[gd_resource type="Resource" load_steps=22 format=2]
 
 [ext_resource path="res://addons/event_system_plugin/resources/registered_events/_.gd" type="Script" id=1]
 [ext_resource path="res://addons/event_system_plugin/events/comment.gd" type="Script" id=2]
 [ext_resource path="res://addons/event_system_plugin/events/set.gd" type="Script" id=3]
-[ext_resource path="res://addons/event_system_plugin/events/jump_to.gd" type="Script" id=4]
+[ext_resource path="res://addons/event_system_plugin/events/goto.gd" type="Script" id=4]
 [ext_resource path="res://addons/event_system_plugin/events/wait.gd" type="Script" id=5]
-[ext_resource path="res://addons/event_system_plugin/events/change_timeline.gd" type="Script" id=6]
+[ext_resource path="res://addons/event_system_plugin/events/new_condition.gd" type="Script" id=6]
 [ext_resource path="res://addons/event_system_plugin/events/emit_signal.gd" type="Script" id=7]
-[ext_resource path="res://addons/event_system_plugin/events/condition.gd" type="Script" id=8]
 [ext_resource path="res://addons/event_system_plugin/events/show.gd" type="Script" id=9]
 [ext_resource path="res://addons/event_system_plugin/events/hide.gd" type="Script" id=10]
 [ext_resource path="res://addons/event_system_plugin/events/end_timeline.gd" type="Script" id=11]
 [ext_resource path="res://addons/event_system_plugin/events/call_from.gd" type="Script" id=12]
 
+[sub_resource type="Resource" id=1]
+resource_name = "Call"
+script = ExtResource( 12 )
+continue_at_end = true
+method = ""
+args = [  ]
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=2]
+resource_name = "Comment"
+script = ExtResource( 2 )
+continue_at_end = true
+text = ""
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=3]
+resource_name = "Emit Signal"
+script = ExtResource( 7 )
+continue_at_end = true
+data = ""
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=4]
+resource_name = "End Timeline"
+script = ExtResource( 11 )
+continue_at_end = true
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=5]
+resource_name = "Hide"
+script = ExtResource( 10 )
+continue_at_end = true
+method = "set"
+args = [ "visible", false ]
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=6]
+resource_name = "Condition"
+script = ExtResource( 6 )
+continue_at_end = true
+condition = ""
+events_if = ""
+events_else = ""
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=7]
+resource_name = "Set"
+script = ExtResource( 3 )
+continue_at_end = true
+method = "set"
+args = [ "", "" ]
+variable_name = ""
+variable_value = ""
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=8]
+resource_name = "Show"
+script = ExtResource( 9 )
+continue_at_end = true
+method = "set"
+args = [ "visible", true ]
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=9]
+resource_name = "Wait"
+script = ExtResource( 5 )
+continue_at_end = true
+wait_time = 0.0
+event_node_path = NodePath("")
+
+[sub_resource type="Resource" id=10]
+resource_name = "Go to"
+script = ExtResource( 4 )
+continue_at_end = true
+event_node_path = NodePath("")
+
 [resource]
+resource_name = "Timeline"
 script = ExtResource( 1 )
-events = [ ExtResource( 3 ), ExtResource( 5 ), ExtResource( 4 ), ExtResource( 2 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 10 ), ExtResource( 9 ), ExtResource( 12 ), ExtResource( 11 ) ]
+event/0 = SubResource( 1 )
+event/1 = SubResource( 2 )
+event/2 = SubResource( 3 )
+event/3 = SubResource( 4 )
+event/4 = SubResource( 5 )
+event/5 = SubResource( 6 )
+event/6 = SubResource( 7 )
+event/7 = SubResource( 8 )
+event/8 = SubResource( 9 )
+event/9 = SubResource( 10 )

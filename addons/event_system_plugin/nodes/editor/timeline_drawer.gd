@@ -24,11 +24,12 @@ func _displayer_draw() -> void:
 		node = node as Control
 		if not node:
 			continue
-		td.draw_line(node.rect_position, Vector2(0, node.rect_size.y), Color.red, 2)
+#		td.draw_line(node.rect_position, Vector2(0, node.rect_size.y), Color.red, 2)
+		draw_rect(node.get_rect(), Color.red, false, 4)
 
 
 func _load_ended() -> void:
-	pass
+	update()
 
 func _init():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE

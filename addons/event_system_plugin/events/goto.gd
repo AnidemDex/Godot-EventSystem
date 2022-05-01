@@ -6,10 +6,9 @@ class_name EventGoTo
 var next_event:String = "" setget set_next_event
 
 func _init() -> void:
-	event_name = "Go to Event"
+	event_name = "Go to"
 	event_color = Color("#FBB13C")
-	event_icon = load("res://addons/event_system_plugin/assets/icons/event_icons/jump_to_event.png") as Texture
-	event_preview_string = "Go to event [{next_event}]"
+	event_preview_string = "event [{next_event}]"
 	continue_at_end = true
 	event_category = "Logic"
 	event_hint = "Helper event to define the next event after this event"

@@ -9,8 +9,7 @@ func _init() -> void:
 	event_color = Color("EB5E55")
 	event_name = "Call"
 	event_category = "Node"
-	event_icon = load("res://addons/event_system_plugin/assets/icons/event_icons/call.png") as Texture
-	event_preview_string = "{node_path} {method} ( {args} ) "
+	event_preview_string = "{event_node_path} {method} ( {args} ) "
 
 	args = []
 
@@ -34,12 +33,3 @@ func set_args(value:Array) -> void:
 	args = value.duplicate()
 	emit_changed()
 	property_list_changed_notify()
-
-
-func _set(property: String, value) -> bool:
-	if property == "node_path":
-		# This exists because node_path property was removed
-		event_node_path = value
-		emit_changed()
-		return true
-	return false

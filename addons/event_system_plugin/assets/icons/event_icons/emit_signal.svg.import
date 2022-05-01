@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/jump_to_event.png-efc49c26e0c96f2bf94b50bb3901a141.stex"
+path="res://.import/emit_signal.svg-f1e8e658a5abcf471929727d8464bbbe.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/event_system_plugin/assets/icons/event_icons/jump_to_event.png"
-dest_files=[ "res://.import/jump_to_event.png-efc49c26e0c96f2bf94b50bb3901a141.stex" ]
+source_file="res://addons/event_system_plugin/assets/icons/event_icons/emit_signal.svg"
+dest_files=[ "res://.import/emit_signal.svg-f1e8e658a5abcf471929727d8464bbbe.stex" ]
 
 [params]
 

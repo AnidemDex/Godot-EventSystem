@@ -6,36 +6,7 @@ class_name Timeline, "res://addons/event_system_plugin/assets/icons/timeline_ico
 #	- EventManager node
 #	- Event
 # Note for future devs: Keep this resource as an event container. No magic tricks
-
-# deprecated
-var last_event = null
-# deprecated
-var next_event = null
-
-# deprecated
-var _curr_evnt_idx:int = -1
-
 var _events:Array = [] setget set_events
-
-# deprecated
-var _event_queue:Array = []
-# deprecated
-var _can_loop:bool = false setget ,can_loop
-
-
-# deprecated
-func initialize() -> void:
-	push_warning("Timeline.initialize() is deprecated and will be removed in future versions")
-#	_event_queue = get_events()
-	return
-
-
-# deprecated
-func event_changed() -> void:
-	push_warning("Timeline.event_changed() is deprecated and will be removed in future versions")
-#	emit_changed()
-#	property_list_changed_notify()
-	return
 
 
 func set_events(events:Array) -> void:
@@ -65,28 +36,6 @@ func remove_event(position:int) -> void:
 
 func get_events() -> Array:
 	return _events.duplicate()
-
-
-func get_next_event() -> Resource:
-	push_warning("Timeline.get_next_event() is deprecated and will be removed in future versions")
-#	_curr_evnt_idx += 1
-#	_update_last_n_next_events()
-#	return _event_queue.pop_front()
-	return null
-
-
-func can_loop() -> bool:
-	return _can_loop
-
-
-# Deprecated
-func get_previous_event() -> Resource:
-	return null
-
-
-# Deprecated
-func _update_last_n_next_events() -> void:
-	return
 
 
 func _set(property:String, value) -> bool:

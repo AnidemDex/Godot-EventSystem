@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/set_variable.png-4b050f51ea19be2530a7ab4a6d1ee544.stex"
+path="res://.import/set_value.svg-96015dc53b42e43f938bbe0cb70a49c4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/event_system_plugin/assets/icons/event_icons/set_variable.png"
-dest_files=[ "res://.import/set_variable.png-4b050f51ea19be2530a7ab4a6d1ee544.stex" ]
+source_file="res://addons/event_system_plugin/assets/icons/event_icons/set_value.svg"
+dest_files=[ "res://.import/set_value.svg-96015dc53b42e43f938bbe0cb70a49c4.stex" ]
 
 [params]
 
