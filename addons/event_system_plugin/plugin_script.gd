@@ -29,25 +29,25 @@ func _enable_plugin():
 
 
 func _handles(object: Object) -> bool:
+	if object is Script:
+		return false
+	
 	if object.get_class() == "ScriptEditorDebuggerInspectedObject":
 		return false
 	
-	if object is EventManagerClass:
+	
+	if object as EventManagerClass != null:
 		return true
 	
-#	if object is EventClass:
-#		return true
-	
-	if object is TimelineClass:
+	if object as TimelineClass != null:
 		return true
 	
 	return false
 
 
 func _edit(object: Object) -> void:
-	if object is EventManagerClass:
 		timeline_editor.set_undo_redo(get_undo_redo())
-		timeline_editor.edit_node(object)
+		timeline_editor.edit(object)
 
 
 func _make_visible(visible: bool) -> void:

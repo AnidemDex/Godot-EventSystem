@@ -38,6 +38,7 @@ var _new_name_label:Label
 var _new_name_edit:LineEdit
 var _remove_dialog:ConfirmationDialog
 var _remove_label:Label
+var _info_label:Label
 
 var _renaming := false
 
@@ -51,6 +52,28 @@ func set_undo_redo(value:UndoRedo) -> void:
 	# with an external reference (aka Editor's UndoRedo).
 	# To internal use of UndoRedo use _get_undo_redo instead.
 	__undo_redo = value
+
+func edit(object:Object) -> void:
+	if object is TimelineClass:
+		_info_label.show()
+		_info_label.text = "You're editing a single timeline. Some editor tools may not be enabled."
+		
+		_edited_node = null
+		
+		_timeline_list.node = null
+		_timeline_list.list_timelines()
+		_timeline_list.add_item(object.resource_name)
+		_timeline_list.disabled = true
+		
+		_timeline_tools.disabled = true
+		
+		edit_timeline(object)
+	
+	if object is EventManagerClass:
+		_info_label.hide()
+		_timeline_list.disabled = false
+		_timeline_tools.disabled = false
+		edit_node(object)
 
 
 func edit_node(node:EventManagerClass) -> void:
@@ -539,8 +562,13 @@ func _init() -> void:
 	_remove_label.text = "Are you sure?"
 	_remove_dialog.add_child(_remove_label)
 	
+	_info_label = Label.new()
+	_info_label.align = Label.ALIGN_CENTER
+	_info_label.visible = false
+	
 	_toolbar.add_child(_timeline_tools)
 	_toolbar.add_child(_timeline_list)
+	_vb.add_child(_info_label)
 	_vb.add_child(_toolbar)
 	_vb.add_child(_sc)
 	
