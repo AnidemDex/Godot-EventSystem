@@ -29,6 +29,7 @@ func update_values() -> void:
 	__update_event_icon()
 	__update_event_name()
 	__update_preview_hint()
+	__update_identation()
 	
 	if has_method("_update_values"):
 		call("_update_values")
@@ -104,6 +105,13 @@ func __update_preview_hint() -> void:
 		text = text.format(Utils.get_property_values_from(event))
 	
 	__event_preview_label.text = text
+
+
+func __update_identation() -> void:
+	var indentation_level:int = 0
+	if event:
+		indentation_level = event.event_indent_level
+	__indent_node.rect_min_size.x = get_constant("indentation", "EventNode") * indentation_level
 
 
 func _notification(what):

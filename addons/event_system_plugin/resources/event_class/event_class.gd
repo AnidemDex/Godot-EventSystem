@@ -52,6 +52,7 @@ var event_preview_string:String = ""
 var event_hint:String = ""
 
 var event_category:String = "Custom"
+var event_indent_level:int = 0
 
 
 var _event_manager:Node
