@@ -60,6 +60,13 @@ func set_idx(value:int) -> void:
 	idx = value
 
 
+func set_indentation_level(level:int) -> void:
+	if !is_instance_valid(__indent_node):
+		return
+	level = max(level, 0)
+	__indent_node.rect_min_size.x = get_constant("indentation", "EventNode") * level
+
+
 func set_button_group(button_group:ButtonGroup) -> void:
 	event_button.set_button_group(button_group)
 
@@ -111,7 +118,7 @@ func __update_identation() -> void:
 	var indentation_level:int = 0
 	if event:
 		indentation_level = event.event_indent_level
-	__indent_node.rect_min_size.x = get_constant("indentation", "EventNode") * indentation_level
+	set_indentation_level(indentation_level)
 
 
 func _notification(what):
@@ -139,7 +146,7 @@ func _init():
 	name = "EventNode"
 	size_flags_horizontal = SIZE_EXPAND_FILL
 	rect_clip_content = true
-	mouse_filter = Control.MOUSE_FILTER_PASS
+#	mouse_filter = Control.MOUSE_FILTER_PASS
 	
 	__indent_node = Control.new()
 	

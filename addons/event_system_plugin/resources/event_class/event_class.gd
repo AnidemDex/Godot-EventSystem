@@ -51,9 +51,20 @@ var event_preview_string:String = ""
 ## The event hint that'll be displayed when you hover the event button in the editor.
 var event_hint:String = ""
 
+## The event category it belongs to. Used by the editor.
 var event_category:String = "Custom"
+
+## The event indentation level. Used by the editor.
 var event_indent_level:int = 0
 
+## Determines if this event uses subevents.
+var event_uses_subevents:bool = false
+
+## The quantity of subevents this event has.
+var event_subevents_quantity:int = 0
+
+## Assigned by the editor. 
+var event_subevent_from:WeakRef = null
 
 var _event_manager:Node
 var _event_node_fallback:Node
@@ -106,6 +117,7 @@ func get_event_icon() -> Texture:
 	
 	return theme.get_icon("custom", "EventIcons") as Texture
 
+
 func _set_continue(value:bool) -> void:
 	continue_at_end = value
 	property_list_changed_notify()
@@ -140,6 +152,8 @@ func _get(property: String):
 func _get_property_list() -> Array:
 	var p:Array = []
 	p.append({"name":"event_node_path", "type":TYPE_NODE_PATH})
+	p.append({"name":"event_subevents_quantity", "type":TYPE_INT, "usage":PROPERTY_USAGE_SCRIPT_VARIABLE|PROPERTY_USAGE_NOEDITOR})
+	
 	return p
 	
 	

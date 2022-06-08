@@ -24,10 +24,11 @@ var shortcuts = load("res://addons/event_system_plugin/core/shortcuts.gd")
 
 var timeline_displayer:TimelineDisplayer
 var last_selected_event_node:EventNode
+var is_moving_event:bool = false
 
 var _sc:ScrollContainer
 var _event_menu:EventMenu
-var _edited_sequence:Resource
+var _edited_sequence:TimelineClass
 var _category_manager:CategoryManager
 var _timeline_list:TimelineList
 var _timeline_tools:MenuButton
@@ -112,35 +113,115 @@ func reload() -> void:
 	timeline_displayer.call_deferred("load_timeline", _edited_sequence)
 
 
-func remove_event(event:EventClass, from_resource:Resource) -> void:
+func remove_event(event:EventClass, from_resource:TimelineClass) -> void:
 	if event == null or from_resource == null:
 		return
 	
 	var _UndoRedo:UndoRedo = _get_undo_redo()
 	
-	var event_idx:int = from_resource.get_events().find(event)
+	var parent_event_ref:WeakRef = event.event_subevent_from
+	var parent_event:EventClass
+	var old_value:int = 0
+	var new_value:int = 0
+	if parent_event_ref:
+		parent_event = parent_event_ref.get_ref() as EventClass
+		if parent_event:
+			old_value = parent_event.event_subevents_quantity
+			new_value = max(0, old_value-1)
+	
+	var event_idx:int = from_resource.get_event_idx(event)
 	_UndoRedo.create_action("Remove event from timeline")
 	_UndoRedo.add_do_method(from_resource, "erase_event", event)
-	_UndoRedo.add_undo_method(from_resource, "add_event", event, event_idx)
+	_UndoRedo.add_undo_method(from_resource, "insert_event", event, event_idx)
+	
+	if parent_event:
+		_UndoRedo.add_do_property(parent_event, "event_subevents_quantity", new_value)
+		_UndoRedo.add_undo_property(parent_event, "event_subevents_quantity", old_value)
+	
 	_UndoRedo.commit_action()
 
 
-func add_event(event:EventClass, at_position:int=-1, from_resource:Resource=_edited_sequence) -> void:
+func add_event(event:EventClass, at_position:int=-1, from_resource:Resource=_edited_sequence, as_subevent_of:EventClass=null) -> void:
 	if not from_resource:
 		return
 	
 	var _UndoRedo:UndoRedo = _get_undo_redo()
+	
+	var parent_event:EventClass = as_subevent_of
+	var old_value:int = 0
+	var new_value:int = 0
+	if parent_event:
+		old_value = parent_event.event_subevents_quantity
+		new_value = old_value+1
+	
 	_UndoRedo.create_action("Add event %s"%event.event_name)
-	_UndoRedo.add_do_method(from_resource, "add_event", event, at_position)
+	if at_position < 0:
+		_UndoRedo.add_do_method(from_resource, "add_event", event)
+	else:
+		_UndoRedo.add_do_method(from_resource, "insert_event", event, at_position)
+	
 	_UndoRedo.add_undo_method(from_resource, "erase_event", event)
+	
+	if parent_event:
+		_UndoRedo.add_do_property(parent_event, "event_subevents_quantity", new_value)
+		_UndoRedo.add_undo_property(parent_event, "event_subevents_quantity", old_value)
+	
+	_UndoRedo.commit_action()
+
+
+func move_event(event:EventClass, to:int, from_resource:TimelineClass=_edited_sequence, as_subevent_of:EventClass=null) -> void:
+	if not from_resource:
+		return
+	
+	var old_position:int = from_resource.get_event_idx(event)
+	
+	var _UndoRedo:UndoRedo = _get_undo_redo()
+	
+	_UndoRedo.create_action("Move event %s"%event.event_name)
+	
+	var old_parent:EventClass
+	var new_parent:EventClass = as_subevent_of
+	
+	if event.event_subevent_from:
+		old_parent = event.event_subevent_from.get_ref() as EventClass
+	
+	var old_value:int = 0
+	var new_value:int = 0
+	
+	if !from_resource.event_is_subevent_of(event, new_parent):
+		if old_parent:
+			old_value = old_parent.event_subevents_quantity
+			new_value = max(0, old_value-1)
+			_UndoRedo.add_do_property(old_parent, "event_subevents_quantity", new_value)
+			_UndoRedo.add_undo_property(old_parent, "event_subevents_quantity", old_value)
+		
+		if new_parent:
+			old_value = new_parent.event_subevents_quantity
+			new_value = old_value+1
+			_UndoRedo.add_do_property(new_parent, "event_subevents_quantity", new_value)
+			_UndoRedo.add_undo_property(new_parent, "event_subevents_quantity", old_value)
+	
+	if to < 0:
+		if old_parent:
+			old_value = old_parent.event_subevents_quantity
+			new_value = max(0, old_value-1)
+			_UndoRedo.add_do_property(old_parent, "event_subevents_quantity", new_value)
+			_UndoRedo.add_undo_property(old_parent, "event_subevents_quantity", old_value)
+	
+	event.event_indent_level = 0
+	
+	_UndoRedo.add_do_method(from_resource, "move_event", event, to)
+	_UndoRedo.add_undo_method(from_resource, "move_event", event, old_position)
+	
 	_UndoRedo.commit_action()
 
 
 func get_drag_data_fw(position, node):
 	if node is EventNode:
-		var event = node.get("event")
-		var timeline = node.get("timeline")
-		remove_event(event, timeline)
+		var event:EventClass = node.get("event")
+		var timeline:TimelineClass = node.get("timeline")
+		is_moving_event = true
+		
 		if not event:
 			return null
 			
@@ -150,6 +231,7 @@ func get_drag_data_fw(position, node):
 		set_drag_preview(_node)
 		var data = {}
 		data["event"] = event
+		
 		return data
 
 
@@ -157,7 +239,7 @@ var _separator_node:EventNode
 var _idx_hint:int = -1
 var _last_node:Node
 func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
-	var event_data
+	var event_data:EventClass
 	
 	if typeof(data) in [TYPE_OBJECT, TYPE_DICTIONARY]:
 		event_data = data.get("event")
@@ -166,43 +248,62 @@ func can_drop_data_fw(position: Vector2, data, node:Control) -> bool:
 	else:
 		return false
 	
-	if is_instance_valid(_separator_node):
-		if _separator_node.is_inside_tree():
-			var separator_parent:Node = _separator_node.get_parent()
-			
-			if node is TimelineDisplayer and node != separator_parent:
-				separator_parent.remove_child(_separator_node)
-				node.add_child(_separator_node)
-		else:
-			if node is TimelineDisplayer:
-				node.add_child(_separator_node)
-		
-		if node is EventNode and node != _separator_node:
-			var node_rect:Rect2 = node.get_rect()
-			if position.y > node_rect.size.y/2:
-				_idx_hint = node.idx+1
-			else:
-				_idx_hint = node.idx
-		
-		if node is TimelineDisplayer:
-			if _last_node == node:
-				_idx_hint = node.get_child_count()-1
-			_idx_hint = clamp(_idx_hint, 0, node.get_child_count())
-			node.move_child(_separator_node, _idx_hint)
-		
-		_separator_node.set("event", event_data)
-		_separator_node.update_values()
-	else:
-		_generate_separator_node()
+#	if !is_instance_valid(_separator_node):
+#		_generate_separator_node()
+#	_separator_node.event = node.get("event") as EventClass
+#	_separator_node.update_values()
+#
+#	if node is EventNode:
+#		var node_rect:Rect2 = node.get_rect()
+#		var node_event = node.get("event")
+#
+#		var pos = node.get_index()
+#		if position.y > node_rect.size.y/2:
+#			pos = node.get_index()+1
+#		timeline_displayer.move_child(_separator_node, pos)
 	
 	_last_node = node
-	return node is TimelineDisplayer and event_data is EventClass
+#	return node is TimelineDisplayer and event_data is EventClass
+	return event_data is EventClass
 
 
 func drop_data_fw(position: Vector2, data, node) -> void:
-	var event_data = data.get("event")
-	_idx_hint = _separator_node.get_index()
-	add_event(event_data, _idx_hint, node.last_used_timeline)
+	var event_data:EventClass = data.get("event")
+	var subevent_of = null
+	
+	if node is EventNode:
+		if event_data == node.event:
+			return
+		
+		if node != _separator_node:
+			var node_rect:Rect2 = node.get_rect()
+			var node_event = node.get("event")
+			
+			_idx_hint = _edited_sequence.get_event_idx(node.event)
+			if position.y > node_rect.size.y/2:
+				_idx_hint = _edited_sequence.get_event_idx(node.event)+1
+				
+				if node.event.event_uses_subevents:
+					subevent_of = node.event
+				
+				elif node.event.event_subevent_from:
+					subevent_of = node.event.event_subevent_from.get_ref()
+				
+				if event_data.event_subevent_from:
+					pass
+		
+		event_data.event_indent_level = node.event.event_indent_level
+	
+	if node is TimelineDisplayer:
+		_idx_hint = -1
+		event_data.event_indent_level = 0
+		event_data.event_subevent_from = null
+	
+	if !is_moving_event:
+		add_event(event_data, _idx_hint, _edited_sequence, subevent_of)
+	else:
+		move_event(event_data, _idx_hint, _edited_sequence, subevent_of)
+	
 	_idx_hint = -1
 
 
@@ -213,7 +314,8 @@ func _generate_separator_node() -> void:
 	_separator_node.modulate.a = 0.5
 	_separator_node.modulate = _separator_node.modulate.darkened(0.2)
 	connect("tree_exited", _separator_node, "free")
-	_separator_node.set_drag_forwarding(self)
+#	_separator_node.set_drag_forwarding(self)
+	timeline_displayer.add_child(_separator_node)
 
 
 func _get_undo_redo() -> UndoRedo:
@@ -232,7 +334,7 @@ func _disconnect_edited_sequence_signals() -> void:
 func _connect_edited_sequence_signals() -> void:
 	if _edited_sequence:
 		if not _edited_sequence.is_connected("changed",self,"reload"):
-			_edited_sequence.connect("changed",self,"reload")
+			_edited_sequence.connect("changed",self,"reload", [], CONNECT_DEFERRED)
 
 
 func _timeline_selected(_index:int) -> void:
@@ -589,6 +691,9 @@ func _notification(what: int) -> void:
 		NOTIFICATION_DRAG_END:
 			if is_instance_valid(_separator_node):
 				_separator_node.queue_free()
+			
+			if is_moving_event:
+				is_moving_event = false
 		
 		NOTIFICATION_THEME_CHANGED:
 			# For some reason this is called _before_ init (what?!)

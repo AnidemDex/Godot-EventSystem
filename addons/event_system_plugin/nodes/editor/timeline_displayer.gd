@@ -41,7 +41,11 @@ func update_view() -> void:
 		add_child(event_node)
 		event_node.call_deferred("update_values")
 	
+	update_indentation()
 	_notify_load_ended()
+
+func update_indentation() -> void:
+	last_used_timeline.update_structure()
 
 
 func remove_all_displayed_events() -> void:
