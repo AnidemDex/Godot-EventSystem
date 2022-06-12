@@ -183,7 +183,7 @@ func _get_property_list() -> Array:
 			{
 				"name":"event/{idx}".format({"idx":event_idx}),
 				"type":TYPE_OBJECT,
-				"usage":PROPERTY_USAGE_DEFAULT|PROPERTY_USAGE_SCRIPT_VARIABLE
+				"usage":PROPERTY_USAGE_NOEDITOR|PROPERTY_USAGE_SCRIPT_VARIABLE
 			}
 		)
 	return p

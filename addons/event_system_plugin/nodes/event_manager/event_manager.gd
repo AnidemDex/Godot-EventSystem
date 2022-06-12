@@ -91,6 +91,7 @@ func add_timeline(timeline_name:String, timeline) -> void:
 		return
 	
 	__data[timeline_name] = timeline
+	property_list_changed_notify()
 
 
 func get_timeline(timeline_name:String) -> Timeline:
@@ -112,6 +113,7 @@ func remove_timeline(timeline_name:String) -> void:
 		push_warning("remove_timeline: Tried to remove '%s' timeline but the timeline doesn't exist."%timeline_name)
 		return
 	__data.erase(timeline_name)
+	property_list_changed_notify()
 
 
 func rename_timeline(timeline_name:String, new_name:String) -> void:

@@ -19,6 +19,7 @@ continue_at_end = true
 method = ""
 args = [  ]
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=2]
 resource_name = "Comment"
@@ -26,6 +27,7 @@ script = ExtResource( 2 )
 continue_at_end = true
 text = ""
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=3]
 resource_name = "Emit Signal"
@@ -33,12 +35,14 @@ script = ExtResource( 7 )
 continue_at_end = true
 data = ""
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=4]
 resource_name = "End Timeline"
 script = ExtResource( 11 )
 continue_at_end = true
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=5]
 resource_name = "Hide"
@@ -47,15 +51,15 @@ continue_at_end = true
 method = "set"
 args = [ "visible", false ]
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=6]
 resource_name = "Condition"
 script = ExtResource( 6 )
 continue_at_end = true
 condition = ""
-events_if = ""
-events_else = ""
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=7]
 resource_name = "Set"
@@ -66,6 +70,7 @@ args = [ "", "" ]
 variable_name = ""
 variable_value = ""
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=8]
 resource_name = "Show"
@@ -74,6 +79,7 @@ continue_at_end = true
 method = "set"
 args = [ "visible", true ]
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=9]
 resource_name = "Wait"
@@ -81,12 +87,14 @@ script = ExtResource( 5 )
 continue_at_end = true
 wait_time = 0.0
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [sub_resource type="Resource" id=10]
 resource_name = "Go to"
 script = ExtResource( 4 )
 continue_at_end = true
 event_node_path = NodePath("")
+event_subevents_quantity = 0
 
 [resource]
 resource_name = "Timeline"
