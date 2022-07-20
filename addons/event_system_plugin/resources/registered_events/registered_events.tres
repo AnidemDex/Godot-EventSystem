@@ -93,6 +93,7 @@ event_subevents_quantity = 0
 resource_name = "Go to"
 script = ExtResource( 4 )
 continue_at_end = true
+next_event = ""
 event_node_path = NodePath("")
 event_subevents_quantity = 0
 

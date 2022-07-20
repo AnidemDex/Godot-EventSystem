@@ -15,3 +15,4 @@ func list_timelines() -> void:
 	disabled = false
 	for timeline_name in node.get_timeline_list():
 		add_item(timeline_name)
+	

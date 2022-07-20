@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/event_system_plugin/nodes/editor/event_selector/event_selector.gd" type="Script" id=1]
+[ext_resource path="res://addons/event_system_plugin/nodes/editor/timeline_list.gd" type="Script" id=2]
+[ext_resource path="res://addons/event_system_plugin/nodes/editor/timeline_displayer.gd" type="Script" id=3]
 
 [node name="ConfirmationDialog" type="ConfirmationDialog"]
 anchor_right = 1.0
@@ -12,6 +14,8 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+displayer_path = NodePath("VBoxContainer/ScrollContainer/TimelineDisplayer")
+list_path = NodePath("VBoxContainer/HBoxContainer/OptionButton")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -34,21 +38,28 @@ margin_right = 152.0
 margin_bottom = 17.0
 text = "Please, select an event:"
 
-[node name="External" type="Button" parent="VBoxContainer/HBoxContainer"]
-margin_left = 844.0
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer"]
+margin_left = 156.0
 margin_right = 1008.0
 margin_bottom = 20.0
-size_flags_horizontal = 10
-text = "Use a different timeline"
+size_flags_horizontal = 3
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Tree" type="Tree" parent="VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
 margin_top = 24.0
 margin_right = 1008.0
 margin_bottom = 556.0
 size_flags_vertical = 3
-allow_reselect = true
+
+[node name="TimelineDisplayer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+margin_right = 1008.0
+margin_bottom = 532.0
+rect_min_size = Vector2( 128, 32 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 3 )
 
 [connection signal="confirmed" from="." to="." method="_on_ConfirmationDialog_confirmed"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/External" to="." method="_on_External_pressed"]
-[connection signal="item_double_clicked" from="VBoxContainer/Tree" to="." method="_on_Tree_item_double_clicked"]
-[connection signal="item_selected" from="VBoxContainer/Tree" to="." method="_on_Tree_item_selected"]

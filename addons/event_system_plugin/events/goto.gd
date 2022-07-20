@@ -28,5 +28,5 @@ func _get(property):
 
 func _get_property_list():
 	var p := []
-	p.append({"name":"next_event", "type":TYPE_OBJECT, "hint":PROPERTY_HINT_RESOURCE_TYPE})
+	p.append({"name":"next_event", "type":TYPE_STRING})
 	return p
