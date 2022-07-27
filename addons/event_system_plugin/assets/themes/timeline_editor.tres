@@ -1,23 +1,45 @@
-[gd_resource type="Theme" load_steps=5 format=2]
+[gd_resource type="Theme" load_steps=19 format=2]
 
-[sub_resource type="StyleBoxFlat" id=2]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/outline.svg" type="Texture" id=1]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/warning.svg" type="Texture" id=2]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/wait.svg" type="Texture" id=3]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/goto.svg" type="Texture" id=4]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/set_value.svg" type="Texture" id=5]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/emit_signal.svg" type="Texture" id=6]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/call.svg" type="Texture" id=7]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/condition.svg" type="Texture" id=9]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/label.svg" type="Texture" id=10]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/visible.png" type="Texture" id=11]
+[ext_resource path="res://addons/event_system_plugin/assets/icons/event_icons/hidden.png" type="Texture" id=12]
 
-[sub_resource type="StyleBoxFlat" id=3]
-content_margin_left = 8.0
-content_margin_right = 4.0
-content_margin_top = 4.0
-content_margin_bottom = 4.0
-corner_radius_top_left = 32
-corner_radius_bottom_left = 32
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 1, 1, 1, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 1, 1, 1, 0 )
+corner_radius_top_left = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id=4]
-content_margin_left = 12.0
-content_margin_right = 8.0
+content_margin_right = 6.0
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.0980392, 0.0980392, 0.0980392, 0.784314 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id=9]
 content_margin_top = 4.0
 content_margin_bottom = 4.0
-corner_radius_top_right = 32
-corner_radius_bottom_right = 32
-shadow_offset = Vector2( 2, 0 )
+bg_color = Color( 0.509804, 0.509804, 0.509804, 0.207843 )
+border_color = Color( 1, 1, 1, 1 )
 
 [sub_resource type="StyleBoxFlat" id=1]
 content_margin_left = 8.0
@@ -35,14 +57,54 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0.509804, 0.509804, 0.509804, 0.207843 )
+border_width_left = 5
+border_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="StyleBoxFlat" id=11]
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+bg_color = Color( 0.2, 0.23, 0.31, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.8, 0.8, 0.8, 0.109804 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxEmpty" id=7]
+
 [resource]
+EventButton/styles/border = SubResource( 6 )
+EventButton/styles/normal = SubResource( 4 )
+EventIcons/icons/call = ExtResource( 7 )
+EventIcons/icons/comment = ExtResource( 10 )
+EventIcons/icons/condition = ExtResource( 9 )
+EventIcons/icons/custom = ExtResource( 2 )
+EventIcons/icons/emit_signal = ExtResource( 6 )
+EventIcons/icons/go_to = ExtResource( 4 )
+EventIcons/icons/hide = ExtResource( 12 )
+EventIcons/icons/set = ExtResource( 5 )
+EventIcons/icons/show = ExtResource( 11 )
+EventIcons/icons/wait = ExtResource( 3 )
 EventNode/colors/default = Color( 0.6, 0.6, 0.6, 1 )
 EventNode/colors/event = Color( 0.984314, 0.694118, 0.235294, 1 )
 EventNode/colors/hover = Color( 0.156863, 0.572549, 0.843137, 1 )
 EventNode/colors/outline = Color( 0.0980392, 0.113725, 0.156863, 1 )
-EventNode/styles/bg = SubResource( 2 )
-EventNode/styles/bg_left = SubResource( 3 )
-EventNode/styles/bg_right = SubResource( 4 )
+EventNode/constants/indentation = 32
+EventNode/constants/margin_left = 6
+EventNode/icons/bg = ExtResource( 1 )
+EventNode/icons/checked = null
+EventNode/icons/unchecked = null
+EventNode/styles/hover = SubResource( 9 )
 EventNode/styles/outline = SubResource( 1 )
-PanelContainer/constants/identation = 32
+EventNode/styles/pressed = SubResource( 10 )
+PopupMenu/styles/panel = SubResource( 11 )
+ToolButton/styles/focus = SubResource( 7 )
 VBoxContainer/constants/separation = 0

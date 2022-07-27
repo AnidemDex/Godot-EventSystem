@@ -6,10 +6,9 @@ func _init() -> void:
 	event_color = Color("EB5E55")
 	event_name = "Show"
 	event_category = "Node"
-	event_icon = load("res://addons/event_system_plugin/assets/icons/event_icons/visible.png") as Texture
 	method = "set"
 	args = ["visible", true]
-	event_preview_string = "{node_path}"
+	event_preview_string = "{event_node_path}"
 
 
 func _get(property: String):

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/change_timeline.png-f2df76eb6295dfca532c3c5948094ad8.stex"
+path="res://.import/outline.svg-80b64523e937bd316725c9fce70a2da7.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/event_system_plugin/assets/icons/event_icons/change_timeline.png"
-dest_files=[ "res://.import/change_timeline.png-f2df76eb6295dfca532c3c5948094ad8.stex" ]
+source_file="res://addons/event_system_plugin/assets/icons/event_icons/outline.svg"
+dest_files=[ "res://.import/outline.svg-80b64523e937bd316725c9fce70a2da7.stex" ]
 
 [params]
 

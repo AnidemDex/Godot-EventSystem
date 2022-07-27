@@ -1,6 +1,9 @@
 tool
 extends VBoxContainer
 
+const EventClass = preload("res://addons/event_system_plugin/resources/event_class/event_class.gd")
+const TimelineClass = preload("res://addons/event_system_plugin/resources/timeline_class/timeline_class.gd")
+
 signal event_node_added(event_node)
 signal load_started
 signal load_ended
@@ -38,7 +41,11 @@ func update_view() -> void:
 		add_child(event_node)
 		event_node.call_deferred("update_values")
 	
+	update_indentation()
 	_notify_load_ended()
+
+func update_indentation() -> void:
+	last_used_timeline.update_structure()
 
 
 func remove_all_displayed_events() -> void:
@@ -51,7 +58,7 @@ func reload() -> void:
 	load_timeline(last_used_timeline)
 
 
-func _get_event_node(event:Event) -> EventNode:
+func _get_event_node(event:EventClass) -> EventNode:
 	if not event:
 		return null
 	

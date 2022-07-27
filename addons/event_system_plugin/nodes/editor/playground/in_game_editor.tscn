@@ -1,0 +1,158 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+var tml
+var editor:Control = load(\"res://addons/event_system_plugin/nodes/editor/timeline_editor.gd\").new()
+
+func _ready() -> void:
+	add_child(editor)
+	editor.set_margins_preset(Control.PRESET_WIDE)
+	
+#	if ResourceLoader.exists(\"test.tres\"):
+#		tml = load(\"test.tres\") as Timeline
+	
+	if !tml:
+		tml = Timeline.new()
+		var cond = EventCondition.new()
+#		cond.event_subevents_quantity = 1
+		tml.add_event(cond)
+		tml.add_event(Event.new())
+		tml.add_event(EventComment.new())
+	
+	editor.timeline_displayer.connect(\"load_ended\", self, \"timeline_changed\")
+		
+	var node := EventManager.new()
+	add_child(node)
+	node.add_timeline(\"new timeline\", tml)
+#	node.add_timeline(\"timeline 2\", tml2)
+	editor.edit_node(node)
+	$Label.raise()
+	$Control.raise()
+	tml.emit_changed()
+
+
+func timeline_changed():
+	$Label.text = get_string_tree()
+	$Control.update()
+
+
+func _exit_tree() -> void:
+	print(get_string_tree())
+#	assert(ResourceSaver.save(\"test.tres\", tml) == OK)
+
+
+func get_string_tree() -> String:
+	var tree = \"\"
+	for event in tml.get_events():
+		for i in event.event_indent_level:
+			tree += \"- \"
+		tree += event.event_name
+		tree += \" | [{sub}] idx:{idx} \\n\".format({\"idx\":tml.get_event_idx(event), \"sub\":event.event_subevents_quantity}) 
+		
+	return tree
+
+func _on_Button_pressed() -> void:
+	editor.reload()
+
+
+func _on_Control_draw() -> void:
+	var rect:Rect2 = editor.timeline_displayer.get_rect()
+	rect.position = editor.timeline_displayer.rect_global_position
+	$Control.draw_rect(rect, Color.red, false)
+
+
+func _on_Undo_pressed() -> void:
+	var ur:UndoRedo = editor._get_undo_redo()
+	if ur.has_undo():
+		ur.undo()
+
+
+func _on_Redo_pressed() -> void:
+	var ur:UndoRedo = editor._get_undo_redo()
+	if ur.has_redo():
+		ur.redo()
+"
+
+[sub_resource type="Animation" id=2]
+resource_name = "Nueva Animación"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:editor_description")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0.1, 0.6 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ "", "asdfasdasda" ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "Nueva Animación (2)"
+
+[node name="Playground" type="Node"]
+script = SubResource( 1 )
+__meta__ = {
+"_editor_description_": "asdfasdasda"
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+"anims/Nueva Animación" = SubResource( 2 )
+"anims/Nueva Animación (2)" = SubResource( 3 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 743.0
+margin_top = 3.0
+margin_right = 1020.0
+margin_bottom = 231.0
+grow_horizontal = 0
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="Control"]
+margin_left = 778.0
+margin_top = 557.0
+margin_right = 942.0
+margin_bottom = 587.0
+text = "reset"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Undo" type="Button" parent="Control"]
+margin_left = 651.0
+margin_top = 562.0
+margin_right = 697.0
+margin_bottom = 582.0
+text = "Undo"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Redo" type="Button" parent="Control"]
+margin_left = 712.0
+margin_top = 562.0
+margin_right = 758.0
+margin_bottom = 582.0
+text = "Redo"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="draw" from="Control" to="." method="_on_Control_draw"]
+[connection signal="pressed" from="Control/Button" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="Control/Undo" to="." method="_on_Undo_pressed"]
+[connection signal="pressed" from="Control/Redo" to="." method="_on_Redo_pressed"]
