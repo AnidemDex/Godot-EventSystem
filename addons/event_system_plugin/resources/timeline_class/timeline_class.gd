@@ -81,6 +81,16 @@ func remove_event(position:int) -> void:
 	property_list_changed_notify()
 
 
+func get_event(position:int) -> Resource:
+	if position == -1:
+		return null
+	
+	if position < _events.size():
+		return _events[position]
+	
+	push_error("get_event: Tried to get an event on a non-existing position.")
+	return null
+
 func event_is_subevent_of(event, of_event) -> bool:
 	if of_event in _structure:
 		return event in _structure.get(of_event, [])
@@ -159,8 +169,9 @@ func _set(property:String, value) -> bool:
 func _get(property:String):
 	if property.begins_with("event/"):
 		var event_idx:int = int(property.split("/", true, 2)[1])
-		if event_idx < _events.size():
-			return _events[event_idx]
+		if event_idx == -1:
+			return null
+		return get_event(event_idx)
 
 
 func _init() -> void:

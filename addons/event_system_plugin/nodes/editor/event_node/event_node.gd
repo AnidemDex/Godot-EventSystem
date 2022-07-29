@@ -109,7 +109,33 @@ func __update_preview_hint() -> void:
 	
 	if event:
 		text = event.event_preview_string
+		
+		if "next_event" in text:
+			text = text.replace("next_event", "__next_event__")
+		
 		text = text.format(Utils.get_property_values_from(event))
+		if "next_event" in event:
+			var data = str(event.get("next_event")).split(";", false, 1)
+			var next_idx = -1
+			var event_name = "???"
+			var timeline_name = ""
+			var hint_string = "{event_name}"
+			var used_timeline = timeline
+			
+			if data.size() >= 1:
+				next_idx = int(data[0])
+			if data.size() >= 2:
+				timeline_name = str(data[1])
+				hint_string += " from {timeline_name}"
+				if is_instance_valid(Engine.get_meta("EventSystem").timeline_editor._edited_node):
+					used_timeline = Engine.get_meta("EventSystem").timeline_editor._edited_node.get_timeline(timeline_name)
+			
+			if used_timeline.get_event(next_idx):
+				event_name = used_timeline.get("event/"+str(next_idx)).resource_name
+			
+			hint_string = hint_string.format({"event_name":event_name, "timeline_name":timeline_name})
+			text = text.format({"__next_event__":hint_string})
+		
 	
 	__event_preview_label.text = text
 

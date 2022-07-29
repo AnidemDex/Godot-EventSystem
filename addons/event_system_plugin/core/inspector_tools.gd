@@ -110,7 +110,7 @@ class InspectorEventSelector extends EditorProperty:
 		if not timeline:
 			return
 		
-		var event = timeline.get("event/"+event_idx)
+		var event = timeline.get_event(int(event_idx))
 		updating = true
 		
 		if event:
