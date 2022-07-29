@@ -14,8 +14,10 @@ func _enter_tree():
 	register_editor_plugin(inspector)
 	
 	show_plugin_version_button()
+	
+	timeline_editor.connect("inspection_requested", self, "_on_TimelineEditor_inspect")
 	timeline_dock_button = add_control_to_bottom_panel(timeline_editor, "TimelineEditor")
-	timeline_dock_button.hide()
+	timeline_dock_button.call_deferred("hide")
 	
 	var main_panel:PanelContainer = load("res://addons/event_system_plugin/nodes/editor/welcome/main_panel.tscn").instance()
 	main_panel.set("repository", get_plugin_repository())
@@ -72,7 +74,6 @@ func _on_TimelineEditor_inspect(resource:Resource) -> void:
 
 func _init() -> void:
 	timeline_editor = TimelineEditor.new()
-	timeline_editor.connect("inspection_requested", self, "_on_TimelineEditor_inspect")
 	register_plugin_node(timeline_editor)
 	
 	connect("scene_changed", self, "_scene_change")
