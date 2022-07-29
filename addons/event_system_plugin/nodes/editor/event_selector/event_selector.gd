@@ -5,31 +5,39 @@ signal event_selected(event, timeline_path)
 
 const TimelineDisplayer = preload("res://addons/event_system_plugin/nodes/editor/timeline_displayer.gd")
 const TimelineList = preload("res://addons/event_system_plugin/nodes/editor/timeline_list.gd")
+const TimelineClass = preload("res://addons/event_system_plugin/resources/timeline_class/timeline_class.gd")
+const EvManager = preload("res://addons/event_system_plugin/nodes/event_manager/event_manager.gd")
 
 export(NodePath) var displayer_path:NodePath
 export(NodePath) var list_path:NodePath
 onready var timeline_displayer:TimelineDisplayer = get_node(displayer_path) as TimelineDisplayer
 onready var timeline_list:TimelineList = get_node(list_path) as TimelineList
 
-var last_selected_item = null
-var external_path:String = ""
-var used_timeline:Resource = null
+var last_selected_item:Node = null
+var timeline_name:String = ""
 var button_group = ButtonGroup.new()
-var edited_node
-var edited_timeline
+var edited_node:EvManager
+var edited_timeline:TimelineClass
+var event_summoner:Resource = null
 
 func _notification(what):
-	if what == NOTIFICATION_POPUP_HIDE:
-		if not visible:
-			set_deferred("external_path", "")
-			set_deferred("used_timeline", null)
+	match what:
+		NOTIFICATION_POPUP_HIDE:
+			if not visible:
+				set_deferred("timeline_name", "")
+				set_deferred("used_timeline", null)
 	
-	if what == NOTIFICATION_POST_POPUP:
-		edited_node = Engine.get_meta("EventSystem").timeline_editor._edited_node
-		edited_timeline = Engine.get_meta("EventSystem").timeline_editor._edited_sequence
+		NOTIFICATION_POST_POPUP:
+			if Engine.editor_hint:
+				edited_node = Engine.get_meta("EventSystem").timeline_editor._edited_node
+				edited_timeline = Engine.get_meta("EventSystem").timeline_editor._edited_sequence
+			
+			timeline_list.node = edited_node
+			timeline_list.list_timelines()
+			build_timeline(edited_timeline)
 		
-		timeline_list.node = edited_node
-		timeline_list.list_timelines()
+		NOTIFICATION_POST_ENTER_TREE:
+			theme = load("res://addons/event_system_plugin/assets/themes/timeline_editor.tres")
 
 
 func _ready() -> void:
@@ -39,12 +47,16 @@ func _ready() -> void:
 
 
 func build_timeline(timeline) -> void:
-	used_timeline = timeline
+	edited_timeline = timeline
 	timeline_displayer.load_timeline(timeline)
 
 
 func get_selected_event() -> Resource:
-	var selected_event:Resource = null
+	var selected_event:Resource
+	
+	if is_instance_valid(last_selected_item):
+		selected_event = last_selected_item.get("event")
+	
 	return selected_event
 
 
@@ -70,13 +82,13 @@ func _on_event_node_added(event_node) -> void:
 	event_node.set_button_group(button_group)
 
 
-func _on_event_node_pressed(button) -> void:
+func _on_event_node_pressed(button:Button) -> void:
 	last_selected_item = button.get_meta("event_node")
 
 
 func _on_ConfirmationDialog_confirmed():
 	var event = get_selected_event()
-	var events:Array = used_timeline.get_events()
-	var event_idx = events.find(event)
+	var event_idx = edited_timeline.get_event_idx(event)
+	var current_timeline = _get_current()
 	
-	emit_signal("event_selected", event_idx, external_path)
+	emit_signal("event_selected", event_idx, current_timeline)
