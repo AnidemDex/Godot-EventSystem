@@ -56,6 +56,7 @@ class InspectorEventSelector extends EditorProperty:
 	var event_selector:Button
 	var popup:ConfirmationDialog
 	var reset_button:Button
+	var info_label:Label
 	var updating:bool = false
 	func _init() -> void:
 		event_selector = Button.new()
@@ -74,12 +75,19 @@ class InspectorEventSelector extends EditorProperty:
 		popup = load("res://addons/event_system_plugin/nodes/editor/event_selector/event_selector.tscn").instance()
 		popup.connect("event_selected", self, "_on_event_selected")
 		add_child(popup)
-	
+		
+		info_label = Label.new()
+		info_label.size_flags_horizontal = SIZE_EXPAND_FILL
+		info_label.align = Label.ALIGN_RIGHT
+		add_child(info_label)
+		set_bottom_editor(info_label)
+
+
 	func _ready():
 		reset_button.icon = get_icon("Remove", "EditorIcons")
 		update_property()
-	
-	
+
+
 	func update_property():
 		var data:Array = str(get_edited_object()[get_edited_property()]).split(";", false)
 		if data.empty():
@@ -92,7 +100,9 @@ class InspectorEventSelector extends EditorProperty:
 		
 		var timeline = null
 		if timeline_path != "":
-			timeline = load(timeline_path)
+			var node = Engine.get_meta("EventSystem").timeline_editor._edited_node
+			if is_instance_valid(node):
+				timeline = node.get_timeline(timeline_path)
 		
 		if not timeline:
 			timeline = Engine.get_meta("EventSystem").timeline_editor._edited_sequence
@@ -102,8 +112,14 @@ class InspectorEventSelector extends EditorProperty:
 		
 		var event = timeline.get("event/"+event_idx)
 		updating = true
+		
 		if event:
 			event_selector.text = event.get("event_name")
+		else:
+			event_selector.text = "Select event"
+		
+		info_label.text = "On timeline: '{name}'".format({"name":timeline_path})
+		
 		updating = false
 		
 	
@@ -120,8 +136,9 @@ class InspectorEventSelector extends EditorProperty:
 		var value = "{idx};{path}".format({"idx":event_idx, "path":path})
 		emit_changed(get_edited_property(), value)
 	
+	
 	func _on_reset_pressed() -> void:
 		if updating:
 			return
 		
-		emit_changed(get_edited_property(), null)
+		emit_changed(get_edited_property(), "-1;")

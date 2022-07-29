@@ -119,7 +119,7 @@ event_subevents_quantity = 0
 resource_name = "Go to"
 script = ExtResource( 8 )
 continue_at_end = true
-next_event = ""
+next_event = "3;Test timeline"
 event_node_path = NodePath("")
 event_subevents_quantity = 0
 
