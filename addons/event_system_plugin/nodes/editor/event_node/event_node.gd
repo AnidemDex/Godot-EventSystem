@@ -123,14 +123,14 @@ func __update_identation() -> void:
 
 func _notification(what):
 	match what:
-		NOTIFICATION_THEME_CHANGED:
+		NOTIFICATION_THEME_CHANGED, NOTIFICATION_ENTER_TREE:
 			var none := StyleBoxEmpty.new()
 			event_button.add_stylebox_override("normal", none)
 			event_button.add_stylebox_override("hover", get_stylebox("hover", "EventNode"))
 			event_button.add_stylebox_override("pressed", get_stylebox("pressed", "EventNode"))
 			event_button.add_stylebox_override("focus", get_stylebox("hover", "EventNode"))
 			
-			__header.get_child(0).set("rect_min_size", Vector2(get_constant("margin_left", "EventNode"),0))
+			__header.get_child(0).set_deferred("rect_min_size", Vector2(get_constant("margin_left", "EventNode"),0))
 			
 			var icon_bg = StyleBoxTexture.new()
 			icon_bg.texture = get_icon("bg", "EventNode")
@@ -140,26 +140,25 @@ func _notification(what):
 			__expand_button.add_icon_override("on", get_icon("checked", "EventNode"))
 			
 			__body.add_constant_override("margin_left", 50)
+			
+			var style = StyleBoxEmpty.new()
+			style.content_margin_bottom = 3
+			__bg.add_stylebox_override("panel", style)
 
 
 func _init():
 	name = "EventNode"
 	size_flags_horizontal = SIZE_EXPAND_FILL
 	rect_clip_content = true
-#	mouse_filter = Control.MOUSE_FILTER_PASS
 	
 	__indent_node = Control.new()
 	
 	__bg = PanelContainer.new()
 	__bg.focus_mode = Control.FOCUS_NONE
 	__bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style = StyleBoxEmpty.new()
-	style.content_margin_bottom = 3
-	__bg.add_stylebox_override("panel", style)
 	__bg.size_flags_horizontal = SIZE_EXPAND_FILL
 	
 	event_button = Button.new()
-	event_button.show_behind_parent = true
 	event_button.toggle_mode = true
 	event_button.focus_mode = Control.FOCUS_ALL
 	event_button.mouse_filter = Control.MOUSE_FILTER_PASS
@@ -192,7 +191,6 @@ func _init():
 	__icon_node.expand = true
 	__icon_node.rect_min_size = Vector2(32,32)
 	__icon_node.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	__icon_node.show_behind_parent = true
 	__icon_container.add_child(__icon_node)
 	
 	__event_label = Label.new()
