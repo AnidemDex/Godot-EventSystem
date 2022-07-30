@@ -2,6 +2,11 @@ tool
 extends Resource
 class_name Timeline, "res://addons/event_system_plugin/assets/icons/timeline_icon.png"
 
+##
+## Base class for all Timelines
+##
+## This resource only keeps an ordered reference of all events registered on it.
+
 # Can't reference:
 #	- EventManager node
 #	- Event
@@ -9,12 +14,13 @@ class_name Timeline, "res://addons/event_system_plugin/assets/icons/timeline_ico
 var _events:Array = [] setget set_events
 var _structure:Dictionary = {}
 
+## Sets the event collection of this timeline. This replaces the current collection.
 func set_events(events:Array) -> void:
 	_events = events
 	emit_changed()
 	property_list_changed_notify()
 
-
+## Adds an event to the timeline.
 func add_event(event) -> void:
 	if has(event):
 		push_error("add_event: Trying to add an event to the timeline, but the event is already added")
@@ -26,7 +32,7 @@ func add_event(event) -> void:
 	emit_changed()
 	property_list_changed_notify()
 
-
+## Insert an [code]event[/code] at position.
 func insert_event(event, at_position:int) -> void:
 	if has(event):
 		push_error("insert_event: Trying to add an event to the timeline, but the event already exist")
@@ -39,7 +45,7 @@ func insert_event(event, at_position:int) -> void:
 	emit_changed()
 	property_list_changed_notify()
 
-
+## Moves an [code]event[/code] to position.
 func move_event(event, to_position:int) -> void:
 	if !has(event):
 		push_error("move_event: Trying to move an event in the timeline, but the event is not added.")
@@ -66,21 +72,21 @@ func move_event(event, to_position:int) -> void:
 	property_list_changed_notify()
 	
 
-
+## Removes an event from the timeline.
 func erase_event(event) -> void:
 	_events.erase(event)
 	update_structure()
 	emit_changed()
 	property_list_changed_notify()
 
-
+## Removes an event at [code]position[/code] from the timelin
 func remove_event(position:int) -> void:
 	_events.remove(position)
 	update_structure()
 	emit_changed()
 	property_list_changed_notify()
 
-
+## Get the event at [code]position[/code]
 func get_event(position:int) -> Resource:
 	if position == -1:
 		return null
@@ -91,19 +97,20 @@ func get_event(position:int) -> Resource:
 	push_error("get_event: Tried to get an event on a non-existing position.")
 	return null
 
+## Returns [code]true[/code] if the [code]event[/code] is sub-event of [code]of_event[/code]
 func event_is_subevent_of(event, of_event) -> bool:
 	if of_event in _structure:
 		return event in _structure.get(of_event, [])
 	return false
 
-
+## Returns an array that contains the sub-events of [code]event[/code]
 func get_event_subevents(event) -> Array:
 	var subevents:Array = []
 	if event in _structure:
 		subevents = _structure.get(event, [])
 	return subevents
 
-
+## Updates the internal event structure.
 func update_structure() -> void:
 	var subevent_holders := []
 	
@@ -137,15 +144,15 @@ func update_structure() -> void:
 		if sub_ev_counter < 1:
 			event.set("event_subevents_quantity", 0)
 
-
+## Returns [code]true[/code] if the timeline contains that event.
 func has(event:Resource) -> bool:
 	return _events.has(event)
 
-
+## Returns the event position in the timeline.
 func get_event_idx(event) -> int:
 	return _events.find(event)
 
-
+## Returns an array containing the events of the timeline.
 func get_events() -> Array:
 	return _events.duplicate()
 
