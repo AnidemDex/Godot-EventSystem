@@ -1,6 +1,8 @@
 tool
 extends Event
 
+## Ends the timeline execution.
+
 func _init() -> void:
 	event_color = Color("EB5E55")
 	event_name = "End Timeline"

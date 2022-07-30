@@ -2,6 +2,9 @@ tool
 extends Event
 class_name EventComment
 
+## A single comment. 
+## It does nothing and can be used as a label point for Go To event.
+
 export(String, MULTILINE) var text:String = "" setget set_text
 
 func _init() -> void:

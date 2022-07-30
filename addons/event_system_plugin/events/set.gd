@@ -2,6 +2,8 @@ tool
 extends "res://addons/event_system_plugin/events/call_from.gd"
 class_name EventSet
 
+## Sets [code]variable_name[/code] be [code]variable_value[/code] in [code]event_node[/code].
+
 export(String) var variable_name:String = "" setget set_var_name
 export(String) var variable_value:String = "" setget set_var_value
 
