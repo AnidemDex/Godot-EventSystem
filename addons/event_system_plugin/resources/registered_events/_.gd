@@ -1,6 +1,8 @@
 tool
 extends "res://addons/event_system_plugin/resources/timeline_class/timeline_class.gd"
 
+## This file stores events displayed in the editor toolbar.
+
 func _init():
 	var events = [
 		load("res://addons/event_system_plugin/events/call_from.gd").new(),
