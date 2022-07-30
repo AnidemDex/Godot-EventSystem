@@ -4,8 +4,9 @@
 > I really appreciate that you are reading this file_ 🤗
 
 # How to contribute
-The issue tracker is the preferred channel for bug reports, features requests and submitting pull requests, but please respect the following restrictions:
-Please take a moment to review this document in order to make the contribution process easy and effective for everyone involved.
+Please take a moment to review this document in order to make the contribution process easy and effective for everyone involved. **Is not a strict rule, but serves as guide to keep a format**.
+
+- The issue tracker is the preferred channel for bug reports, features requests and submitting pull requests.
 
 ## Table of contents
 - [How to contribute](#how-to-contribute)
