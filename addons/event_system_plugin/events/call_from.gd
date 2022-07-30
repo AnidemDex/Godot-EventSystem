@@ -2,6 +2,8 @@ tool
 extends Event
 class_name EventCall
 
+## Makes a [code]call()[/code] to a method in a node with any number of arguments.
+
 export(String) var method:String = "" setget set_method
 export(Array) var args:Array = []
 

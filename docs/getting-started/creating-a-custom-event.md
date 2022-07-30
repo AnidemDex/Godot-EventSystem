@@ -1,8 +1,8 @@
 # Making a custom event
 
-Events are the code fragments that the EventManager will execute, contained in a sequence (Timeline).
+Events are code fragments that the EventManager will execute, contained in a sequence (Timeline).
 
-By default the plugin includes some events that correspond to tasks commonly performed in code: making a comment, a boolean check, setting a variable to a certain value, among others.
+By default, the plugin includes some events that correspond to tasks commonly performed in code: making a comment, a boolean check, setting a variable to a certain value, among others.
 
 You can create and add your own events to this system without much trouble, which gives you the ability to execute your own code snippets under your own rules.
 

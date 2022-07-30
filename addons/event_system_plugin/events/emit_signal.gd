@@ -2,6 +2,8 @@ tool
 extends Event
 class_name EventEmitSignal
 
+## Makes EventManager emits [signal EventManager.custom_signal] with string value [code]data[/code].
+
 export(String) var data:String = "" setget _set_data
 
 func _init() -> void:

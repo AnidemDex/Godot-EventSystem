@@ -5,9 +5,8 @@ class_name Event, "res://addons/event_system_plugin/assets/icons/timeline_icon.p
 ## 
 ## Base class for all events.
 ##
-## @desc: 
-##    Every event relies on this class. 
-##    If you want to do your own event, you should [code]extend[/code] this class.
+## Every event relies on this class. 
+## If you want to do your own event, you should [code]extend[/code] this class.
 ##
 
 ## Emmited when the event starts.

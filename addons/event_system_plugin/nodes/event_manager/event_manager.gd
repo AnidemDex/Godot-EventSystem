@@ -2,19 +2,36 @@ tool
 extends Node
 class_name EventManager
 
+##
+## Base class for all event manager nodes.
+##
+## EventManager executes the event behaviour, and manages the event order execution.
+## 
+
 signal custom_signal(data)
 
+## Emmited when an Event is executed. Event resource is passed in the signal
 signal event_started(event)
+## Emmited when an Event finished. Event resource is passed in the signal.
 signal event_finished(event)
 
+## Emmited when a timeline starts. Timeline resource is passed in the signal
 signal timeline_started(timeline_resource)
+## Emmited when a timeline finish. Timeline resource is passed in the signal
 signal timeline_finished(timeline_resource)
 
+## This is the node were events will be applied to.
+## This node is used if the event doesn't define an [member Event.event_node_path]
+## and is relative to the current scene node owner.
 export(NodePath) var event_node_fallback_path:NodePath = "."
+## If is [code]true[/code], the node will call [method start_timeline] when owner is ready.
 export(bool) var start_on_ready:bool = false
 
+## Current timeline name. You can get the current timeline resource with [method get_timeline]
 var current_timeline:String=""
+## Current executed event.
 var current_event
+## The current event position accordint to [member current_timeline] resource.
 var current_idx:int = -1
 
 var __data := {}
@@ -26,7 +43,10 @@ func _ready() -> void:
 	if start_on_ready:
 		call_deferred("start_timeline", current_timeline)
 
-
+## Starts timeline. This method must be called to start EventManager process.
+## [code]timeline_name[/code] is the name of any timeline saved in the node.
+## You can optionally pass [code]from_event_index[/code] to define from
+## where the timeline should start.
 func start_timeline(timeline_name:String, from_event_index:int=0) -> void:
 	if timeline_name == "[None]":
 		return
@@ -39,7 +59,7 @@ func start_timeline(timeline_name:String, from_event_index:int=0) -> void:
 	_notify_timeline_start()
 	go_to_next_event()
 
-
+## Advances to the next event in the current timeline.
 func go_to_next_event() -> void:
 	var event
 	
@@ -76,7 +96,7 @@ func go_to_next_event() -> void:
 	
 	_execute_event(event)
 
-
+## Adds a [code]timeline[/code] to this node named [code]timeline_name[/code].
 func add_timeline(timeline_name:String, timeline) -> void:
 	if timeline_name == "":
 		push_error("add_timeline: Tried to add a timeline with an empty name!")
@@ -93,7 +113,7 @@ func add_timeline(timeline_name:String, timeline) -> void:
 	__data[timeline_name] = timeline
 	property_list_changed_notify()
 
-
+## Returns the [code]timeline[/code] associated to [code]timeline_name[/code]
 func get_timeline(timeline_name:String) -> Timeline:
 	var res = null
 	
@@ -103,11 +123,11 @@ func get_timeline(timeline_name:String) -> Timeline:
 	res = __data.get(timeline_name, null)
 	return res
 
-
+## Returns true if the node has a [code]timeline_name[/code]
 func has_timeline(timeline_name:String) -> bool:
 	return __data.has(timeline_name)
 
-
+## Removes the timeline associated to [code]timeline_name[/code]
 func remove_timeline(timeline_name:String) -> void:
 	if !has_timeline(timeline_name):
 		push_warning("remove_timeline: Tried to remove '%s' timeline but the timeline doesn't exist."%timeline_name)
@@ -115,7 +135,7 @@ func remove_timeline(timeline_name:String) -> void:
 	__data.erase(timeline_name)
 	property_list_changed_notify()
 
-
+## Renames [code]timeline_name[/code] to [code]new_name[/code]
 func rename_timeline(timeline_name:String, new_name:String) -> void:
 	var timeline:Timeline = get_timeline(timeline_name)
 	
@@ -130,7 +150,7 @@ func rename_timeline(timeline_name:String, new_name:String) -> void:
 	remove_timeline(timeline_name)
 	add_timeline(new_name, timeline)
 
-
+## Returns a [class PoolStringArray] containing timeline names saved on this node.
 func get_timeline_list() -> PoolStringArray:
 	return PoolStringArray(__data.keys())
 

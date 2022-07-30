@@ -2,6 +2,11 @@ tool
 extends Event
 class_name EventCondition
 
+## Conditional event that executes true events if the evaluated [code]condition[/code]
+##
+## Works like if-statements. The [code]condition[/code] is evaluated according the
+## assigned [code]event_node[/code]
+
 const _Utils = preload("res://addons/event_system_plugin/core/utils.gd")
 
 export(String) var condition:String = ""

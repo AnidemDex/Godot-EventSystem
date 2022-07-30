@@ -2,6 +2,9 @@ tool
 extends Event
 class_name EventGoTo
 
+## Makes EventManager execute the defined event in [code]next_event[/code] instead
+## of the directly next one.
+
 # The next event hint of this event. "<index>;<timeline>"
 var next_event:String = "" setget set_next_event
 
