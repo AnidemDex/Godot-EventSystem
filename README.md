@@ -1,3 +1,8 @@
+# Project moved!
+
+This project was moved to https://github.com/AnidemDex/Godot-CommandTimeline
+---
+
 # 🪧 Godot-EventSystem [2.0] 🎉
 An easy but powerful event system implementation for Godot Engine
 
